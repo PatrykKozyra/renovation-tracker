@@ -3,7 +3,7 @@ from django.utils.translation import gettext_lazy as _
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Row, Column, Div, HTML, Field
 from crispy_forms.bootstrap import FormActions
-from .models import Purchase, PurchaseCategory, Room, RoomProgress, RoomProgressPhoto, WorkSession, ElectricalCircuit, Property, DropdownChoice, Equipment, EquipmentPhoto, EquipmentAssignment
+from .models import Purchase, PurchaseCategory, Room, RoomProgress, RoomProgressPhoto, WorkSession, ElectricalCircuit, Property, DropdownChoice, Equipment, EquipmentPhoto, EquipmentAssignment, RenovationTask, ShoppingItem
 
 
 class PurchaseForm(forms.ModelForm):
@@ -318,53 +318,6 @@ class PropertyForm(forms.ModelForm):
         )
 
 
-class PurchaseFilterForm(forms.Form):
-    """Filter form for purchases list"""
-
-    category = forms.ModelChoiceField(
-        queryset=PurchaseCategory.objects.all(),
-        required=False,
-        empty_label=_('Wszystkie kategorie'),
-        label=_('Kategoria')
-    )
-
-    vendor = forms.CharField(
-        required=False,
-        label=_('Sklep'),
-        widget=forms.TextInput(attrs={'placeholder': _('Wpisz nazwę sklepu...')})
-    )
-
-    date_from = forms.DateField(
-        required=False,
-        label=_('Data od'),
-        widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'})
-    )
-
-    date_to = forms.DateField(
-        required=False,
-        label=_('Data do'),
-        widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'})
-    )
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_method = 'get'
-        self.helper.form_class = 'form-inline'
-        self.helper.layout = Layout(
-            Row(
-                Column('category', css_class='col-md-3'),
-                Column('vendor', css_class='col-md-3'),
-                Column('date_from', css_class='col-md-2'),
-                Column('date_to', css_class='col-md-2'),
-                Column(
-                    Submit('filter', _('Filtruj'), css_class='btn btn-primary'),
-                    css_class='col-md-2 d-flex align-items-end'
-                ),
-            )
-        )
-
-
 class DropdownChoiceForm(forms.ModelForm):
     """Form for managing dropdown choices"""
 
@@ -375,6 +328,9 @@ class DropdownChoiceForm(forms.ModelForm):
             'value': forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('np. salon, plytki')}),
             'label_pl': forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('Nazwa po polsku')}),
             'label_en': forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('Nazwa po angielsku')}),
+        }
+        help_texts = {
+            'display_order': _('Niższe liczby pojawiają się jako pierwsze (np. 1 pojawi się przed 5). Użyj wielokrotności 10 (10, 20, 30), aby łatwiej można było wstawiać nowe opcje później.'),
         }
 
     def __init__(self, *args, **kwargs):
@@ -513,5 +469,100 @@ class EquipmentAssignmentForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('submit', _('Przypisz do nieruchomości'), css_class='btn btn-primary btn-lg'),
+            )
+        )
+
+
+class RenovationTaskForm(forms.ModelForm):
+    """Form for adding/editing renovation tasks"""
+
+    class Meta:
+        model = RenovationTask
+        fields = ['title', 'description', 'room', 'status', 'priority']
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 3}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        current_property = kwargs.pop('current_property', None)
+        super().__init__(*args, **kwargs)
+
+        # Filter rooms by current property
+        if current_property:
+            self.fields['room'].queryset = Room.objects.filter(property=current_property)
+            self.fields['room'].required = False
+
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+        self.helper.layout = Layout(
+            Row(
+                Column('title', css_class='form-group col-md-12 mb-3'),
+            ),
+            Row(
+                Column('room', css_class='form-group col-md-6 mb-3'),
+                Column('priority', css_class='form-group col-md-3 mb-3'),
+                Column('status', css_class='form-group col-md-3 mb-3'),
+            ),
+            Row(
+                Column('description', css_class='form-group col-md-12 mb-3'),
+            ),
+            FormActions(
+                Submit('submit', _('Zapisz zadanie'), css_class='btn btn-success btn-lg'),
+            )
+        )
+
+
+class ShoppingItemForm(forms.ModelForm):
+    """Form for adding/editing shopping items"""
+
+    class Meta:
+        model = ShoppingItem
+        fields = ['title', 'description', 'room', 'vendor', 'quantity', 'unit', 'estimated_price', 'status', 'priority']
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 3}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        current_property = kwargs.pop('current_property', None)
+        super().__init__(*args, **kwargs)
+
+        # Filter rooms by current property
+        if current_property:
+            self.fields['room'].queryset = Room.objects.filter(property=current_property)
+            self.fields['room'].required = False
+
+        # Make vendor a dropdown with choices from DropdownChoice
+        vendor_choices = DropdownChoice.get_choices_for_type('vendor')
+        if vendor_choices:
+            self.fields['vendor'] = forms.ChoiceField(
+                choices=[('', '---------')] + vendor_choices,
+                required=False,
+                label=_('Sklep')
+            )
+
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+        self.helper.layout = Layout(
+            Row(
+                Column('title', css_class='form-group col-md-12 mb-3'),
+            ),
+            Row(
+                Column('room', css_class='form-group col-md-6 mb-3'),
+                Column('vendor', css_class='form-group col-md-6 mb-3'),
+            ),
+            Row(
+                Column('quantity', css_class='form-group col-md-4 mb-3'),
+                Column('unit', css_class='form-group col-md-4 mb-3'),
+                Column('estimated_price', css_class='form-group col-md-4 mb-3'),
+            ),
+            Row(
+                Column('priority', css_class='form-group col-md-6 mb-3'),
+                Column('status', css_class='form-group col-md-6 mb-3'),
+            ),
+            Row(
+                Column('description', css_class='form-group col-md-12 mb-3'),
+            ),
+            FormActions(
+                Submit('submit', _('Zapisz przedmiot'), css_class='btn btn-primary btn-lg'),
             )
         )

@@ -580,13 +580,23 @@ class DropdownChoice(models.Model):
         return f"{self.get_choice_type_display()} - {self.label_pl}"
 
     @classmethod
-    def get_choices_for_type(cls, choice_type):
+    def get_choices_for_type(cls, choice_type, language=None):
         """Get active choices for a specific dropdown type"""
+        from django.utils import translation
+
+        if language is None:
+            language = translation.get_language()
+
         choices = cls.objects.filter(
             choice_type=choice_type,
             is_active=True
         ).order_by('display_order', 'label_pl')
-        return [(choice.value, choice.label_pl) for choice in choices]
+
+        # Return choices with the appropriate language label
+        if language and language.startswith('en'):
+            return [(choice.value, choice.label_en) for choice in choices]
+        else:
+            return [(choice.value, choice.label_pl) for choice in choices]
 
 
 class Equipment(models.Model):
@@ -792,3 +802,238 @@ class EquipmentAssignment(models.Model):
     def is_active(self):
         """Check if assignment is currently active"""
         return self.end_date is None
+
+
+class RenovationTask(models.Model):
+    """To-do item for renovation work tasks"""
+
+    STATUS_NOT_STARTED = 'not_started'
+    STATUS_IN_PROGRESS = 'in_progress'
+    STATUS_COMPLETED = 'completed'
+    STATUS_ON_HOLD = 'on_hold'
+
+    STATUS_CHOICES = [
+        (STATUS_NOT_STARTED, _('Nie rozpoczęto')),
+        (STATUS_IN_PROGRESS, _('W trakcie')),
+        (STATUS_COMPLETED, _('Zakończono')),
+        (STATUS_ON_HOLD, _('Wstrzymano')),
+    ]
+
+    related_property = models.ForeignKey(
+        Property,
+        on_delete=models.CASCADE,
+        related_name='renovation_tasks',
+        verbose_name=_('Nieruchomość')
+    )
+
+    room = models.ForeignKey(
+        Room,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='renovation_tasks',
+        verbose_name=_('Pomieszczenie')
+    )
+
+    title = models.CharField(
+        max_length=200,
+        verbose_name=_('Tytuł')
+    )
+
+    description = models.TextField(
+        blank=True,
+        verbose_name=_('Opis')
+    )
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default=STATUS_NOT_STARTED,
+        verbose_name=_('Status')
+    )
+
+    priority = models.IntegerField(
+        default=3,
+        validators=[MinValueValidator(1)],
+        verbose_name=_('Priorytet'),
+        help_text=_('1 = najwyższy, 5 = najniższy')
+    )
+
+    start_date = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name=_('Data rozpoczęcia')
+    )
+
+    end_date = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name=_('Data zakończenia')
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_('Utworzono')
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_('Zaktualizowano')
+    )
+
+    class Meta:
+        verbose_name = _('Zadanie remontowe')
+        verbose_name_plural = _('Zadania remontowe')
+        ordering = ['status', 'priority', '-created_at']
+
+    def __str__(self):
+        return f"{self.title} ({self.get_status_display()})"
+
+    def save(self, *args, **kwargs):
+        """Auto-set start_date and end_date based on status changes"""
+        if self.pk:  # Existing object
+            try:
+                old_instance = RenovationTask.objects.get(pk=self.pk)
+                # If status changed from not_started to in_progress, set start_date
+                if (old_instance.status == self.STATUS_NOT_STARTED and
+                    self.status == self.STATUS_IN_PROGRESS and
+                    not self.start_date):
+                    from django.utils import timezone
+                    self.start_date = timezone.now()
+
+                # If status changed to completed, set end_date
+                if (self.status == self.STATUS_COMPLETED and
+                    old_instance.status != self.STATUS_COMPLETED and
+                    not self.end_date):
+                    from django.utils import timezone
+                    self.end_date = timezone.now()
+            except RenovationTask.DoesNotExist:
+                pass
+
+        super().save(*args, **kwargs)
+
+
+class ShoppingItem(models.Model):
+    """To-do item for shopping tasks"""
+
+    STATUS_NOT_STARTED = 'not_started'
+    STATUS_ORDERED = 'ordered'
+    STATUS_BOUGHT = 'bought'
+
+    STATUS_CHOICES = [
+        (STATUS_NOT_STARTED, _('Nie kupiono')),
+        (STATUS_ORDERED, _('Zamówiono')),
+        (STATUS_BOUGHT, _('Kupiono i dostarczone')),
+    ]
+
+    UNIT_PIECE = 'piece'
+    UNIT_KG = 'kg'
+    UNIT_LITER = 'liter'
+    UNIT_METER = 'meter'
+    UNIT_M2 = 'm2'
+    UNIT_PACKAGE = 'package'
+
+    UNIT_CHOICES = [
+        (UNIT_PIECE, _('szt.')),
+        (UNIT_KG, _('kg')),
+        (UNIT_LITER, _('l')),
+        (UNIT_METER, _('m')),
+        (UNIT_M2, _('m²')),
+        (UNIT_PACKAGE, _('opakowanie')),
+    ]
+
+    related_property = models.ForeignKey(
+        Property,
+        on_delete=models.CASCADE,
+        related_name='shopping_items',
+        verbose_name=_('Nieruchomość')
+    )
+
+    room = models.ForeignKey(
+        Room,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='shopping_items',
+        verbose_name=_('Pomieszczenie')
+    )
+
+    title = models.CharField(
+        max_length=200,
+        verbose_name=_('Nazwa przedmiotu')
+    )
+
+    description = models.TextField(
+        blank=True,
+        verbose_name=_('Szczegóły')
+    )
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default=STATUS_NOT_STARTED,
+        verbose_name=_('Status')
+    )
+
+    vendor = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name=_('Sklep')
+    )
+
+    estimated_price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(Decimal('0.01'))],
+        verbose_name=_('Szacowana cena')
+    )
+
+    quantity = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(Decimal('0.01'))],
+        verbose_name=_('Ilość')
+    )
+
+    unit = models.CharField(
+        max_length=20,
+        choices=UNIT_CHOICES,
+        default=UNIT_PIECE,
+        verbose_name=_('Jednostka miary')
+    )
+
+    priority = models.IntegerField(
+        default=3,
+        validators=[MinValueValidator(1)],
+        verbose_name=_('Priorytet'),
+        help_text=_('1 = najwyższy, 5 = najniższy')
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_('Utworzono')
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_('Zaktualizowano')
+    )
+
+    class Meta:
+        verbose_name = _('Przedmiot do kupienia')
+        verbose_name_plural = _('Przedmioty do kupienia')
+        ordering = ['status', 'priority', '-created_at']
+
+    def __str__(self):
+        return f"{self.title} ({self.get_status_display()})"
+
+    @property
+    def total_estimated_cost(self):
+        """Calculate total estimated cost based on quantity and price"""
+        if self.estimated_price and self.quantity:
+            return self.estimated_price * self.quantity
+        return self.estimated_price or Decimal('0.00')

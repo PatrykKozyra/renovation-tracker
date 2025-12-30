@@ -1,0 +1,47 @@
+{% extends 'renovation/base.html' %}
+{% load static i18n crispy_forms_tags %}
+
+{% block title %}{{ title }} - {% trans "Tracker Remontu" %}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-card {
+        max-width: 900px;
+        margin: 2rem auto;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+    .form-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 0.5rem 0.5rem 0 0;
+    }
+    .form-body {
+        padding: 2rem;
+    }
+    .required label:after {
+        content: " *";
+        color: #dc3545;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="card form-card">
+        <div class="form-header">
+            <h2 class="mb-0">
+                <i class="bi bi-cart-plus"></i> {{ title }}
+            </h2>
+        </div>
+        <div class="form-body">
+            {% crispy form %}
+            <div class="mt-3">
+                <a href="{% url 'todo_list' %}" class="btn btn-secondary btn-lg">
+                    <i class="bi bi-arrow-left"></i> {% trans "Anuluj" %}
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -31,7 +31,6 @@ ENV/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
-/media
 /staticfiles
 
 # Environment variables
@@ -49,8 +48,14 @@ db.sqlite3-journal
 # Static files (if collected)
 /static/
 
-# Media files (user uploads)
-/media/
+# Media files (user uploads) - now stored on D: drive
+# Keep local media folder for backwards compatibility
+/media/*.jpg
+/media/*.png
+/media/*.gif
+/media/*.pdf
+!/media/.gitkeep
+!/media/README.md
 
 # Coverage reports
 htmlcov/

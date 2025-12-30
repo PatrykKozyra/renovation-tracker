@@ -3,13 +3,13 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
-from django.db.models import Sum, Count
+from django.db.models import Sum, Count, Q
 from django.db.models.functions import TruncMonth
 from datetime import timedelta, datetime, date
 from calendar import monthrange
 import json
-from .models import Purchase, RoomProgress, RoomProgressPhoto, WorkSession, PurchaseCategory, Room, ElectricalCircuit, Property, DropdownChoice, Equipment, EquipmentPhoto, EquipmentAssignment
-from .forms import PurchaseForm, RoomProgressForm, WorkSessionForm, ElectricalCircuitForm, PropertyForm, RoomForm, DropdownChoiceForm, EquipmentForm, EquipmentPhotoForm, EquipmentAssignmentForm
+from .models import Purchase, RoomProgress, RoomProgressPhoto, WorkSession, PurchaseCategory, Room, ElectricalCircuit, Property, DropdownChoice, Equipment, EquipmentPhoto, EquipmentAssignment, RenovationTask, ShoppingItem
+from .forms import PurchaseForm, RoomProgressForm, WorkSessionForm, ElectricalCircuitForm, PropertyForm, RoomForm, DropdownChoiceForm, EquipmentForm, EquipmentPhotoForm, EquipmentAssignmentForm, RenovationTaskForm, ShoppingItemForm
 
 
 def get_current_property(request):
@@ -50,20 +50,25 @@ def dashboard(request):
     progress_entries_count = RoomProgress.objects.filter(room__property=current_property).count()
     recent_progress = RoomProgress.objects.filter(room__property=current_property).select_related('room').prefetch_related('photos').order_by('-date')[:5]
 
-    # Work sessions - This month vs Total
+    # Work sessions - This month vs Total (filtered by current property through rooms)
     today = date.today()
     first_day_of_month = date(today.year, today.month, 1)
 
-    # Total hours
-    all_sessions = WorkSession.objects.all()
+    # Total hours - filter by property through rooms_worked_on relationship
+    all_sessions = WorkSession.objects.filter(
+        rooms_worked_on__property=current_property
+    ).distinct()
     total_duration = timedelta()
     for session in all_sessions:
         if session.duration:
             total_duration += session.duration
     total_work_hours = total_duration.total_seconds() / 3600
 
-    # This month hours
-    this_month_sessions = WorkSession.objects.filter(date__gte=first_day_of_month)
+    # This month hours - filter by property through rooms
+    this_month_sessions = WorkSession.objects.filter(
+        rooms_worked_on__property=current_property,
+        date__gte=first_day_of_month
+    ).distinct()
     month_duration = timedelta()
     for session in this_month_sessions:
         if session.duration:
@@ -73,13 +78,15 @@ def dashboard(request):
     work_sessions_count = all_sessions.count()
     month_sessions_count = this_month_sessions.count()
 
-    # Photos
-    total_photos = RoomProgressPhoto.objects.count()
+    # Photos - filter by property
+    total_photos = RoomProgressPhoto.objects.filter(
+        progress__room__property=current_property
+    ).count()
 
-    # Category spending for pie chart
+    # Category spending for pie chart - filter by property
     categories = PurchaseCategory.objects.annotate(
-        total=Sum('purchases__amount'),
-        count=Count('purchases')
+        total=Sum('purchases__amount', filter=Q(purchases__property=current_property)),
+        count=Count('purchases', filter=Q(purchases__property=current_property))
     ).filter(total__isnull=False).order_by('-total')
 
     category_labels = []
@@ -90,9 +97,10 @@ def dashboard(request):
         category_labels.append(cat.get_name_display())
         category_data.append(float(cat.total))
 
-    # Monthly spending trends (last 6 months)
+    # Monthly spending trends (last 6 months) - filter by property
     six_months_ago = today - timedelta(days=180)
     monthly_data = Purchase.objects.filter(
+        property=current_property,
         date__gte=six_months_ago
     ).annotate(
         month=TruncMonth('date')
@@ -107,15 +115,16 @@ def dashboard(request):
         monthly_labels.append(month_name)
         monthly_amounts.append(float(item['total']))
 
-    # Room progress status
-    all_rooms = Room.objects.all()
+    # Room progress status - filter by property and optimize queries
+    all_rooms = Room.objects.filter(property=current_property).prefetch_related(
+        'progress_entries__photos'
+    )
     room_status = []
     for room in all_rooms:
         latest_progress = room.progress_entries.order_by('-date').first()
         progress_count = room.progress_entries.count()
 
         # Calculate progress percentage (based on number of updates)
-        # You can customize this logic
         max_expected_updates = 10  # Assume 10 updates means 100%
         progress_percentage = min(100, (progress_count / max_expected_updates) * 100)
 
@@ -134,10 +143,9 @@ def dashboard(request):
             'latest_photo': latest_photo,
         })
 
-    # Top vendors by spending
-    from django.db.models import Sum as DbSum
-    top_vendors = Purchase.objects.values('vendor').annotate(
-        total=DbSum('amount'),
+    # Top vendors by spending - filter by property
+    top_vendors = Purchase.objects.filter(property=current_property).values('vendor').annotate(
+        total=Sum('amount'),
         count=Count('id')
     ).order_by('-total')[:5]
 
@@ -918,3 +926,221 @@ def equipment_unassign(request, equipment_pk):
         'assignment': assignment,
     }
     return render(request, 'renovation/equipment_unassign_confirm.html', context)
+
+
+# To-Do List Views
+
+@login_required
+def todo_list(request):
+    """Display combined to-do list for current property"""
+    current_property = get_current_property(request)
+    if not current_property:
+        messages.warning(request, _('Proszę dodać nieruchomość przed rozpoczęciem pracy.'))
+        return redirect('property_add')
+
+    # Get filter parameters
+    task_filter = request.GET.get('filter', 'all')  # all, active, completed
+    task_type = request.GET.get('type', 'all')  # all, tasks, shopping
+
+    # Get renovation tasks with optimized queries
+    renovation_tasks = RenovationTask.objects.filter(
+        related_property=current_property
+    ).select_related('room')
+    if task_filter == 'active':
+        renovation_tasks = renovation_tasks.exclude(status=RenovationTask.STATUS_COMPLETED)
+    elif task_filter == 'completed':
+        renovation_tasks = renovation_tasks.filter(status=RenovationTask.STATUS_COMPLETED)
+
+    # Get shopping items with optimized queries
+    shopping_items = ShoppingItem.objects.filter(
+        related_property=current_property
+    ).select_related('room')
+    if task_filter == 'active':
+        shopping_items = shopping_items.exclude(status=ShoppingItem.STATUS_BOUGHT)
+    elif task_filter == 'completed':
+        shopping_items = shopping_items.filter(status=ShoppingItem.STATUS_BOUGHT)
+
+    # Calculate statistics
+    total_renovation_tasks = RenovationTask.objects.filter(related_property=current_property).count()
+    completed_renovation_tasks = RenovationTask.objects.filter(
+        related_property=current_property,
+        status=RenovationTask.STATUS_COMPLETED
+    ).count()
+
+    total_shopping_items = ShoppingItem.objects.filter(related_property=current_property).count()
+    completed_shopping_items = ShoppingItem.objects.filter(
+        related_property=current_property,
+        status=ShoppingItem.STATUS_BOUGHT
+    ).count()
+
+    total_estimated_shopping_cost = shopping_items.aggregate(
+        total=Sum('estimated_price')
+    )['total'] or 0
+
+    context = {
+        'current_property': current_property,
+        'renovation_tasks': renovation_tasks,
+        'shopping_items': shopping_items,
+        'task_filter': task_filter,
+        'task_type': task_type,
+        'total_renovation_tasks': total_renovation_tasks,
+        'completed_renovation_tasks': completed_renovation_tasks,
+        'total_shopping_items': total_shopping_items,
+        'completed_shopping_items': completed_shopping_items,
+        'total_estimated_shopping_cost': total_estimated_shopping_cost,
+    }
+    return render(request, 'renovation/todo_list.html', context)
+
+
+@login_required
+def renovation_task_add(request):
+    """Add a new renovation task"""
+    current_property = get_current_property(request)
+    if not current_property:
+        messages.warning(request, _('Proszę dodać nieruchomość przed rozpoczęciem pracy.'))
+        return redirect('property_add')
+
+    if request.method == 'POST':
+        form = RenovationTaskForm(request.POST, current_property=current_property)
+        if form.is_valid():
+            task = form.save(commit=False)
+            task.related_property = current_property
+            task.save()
+            messages.success(request, _('Zadanie zostało dodane pomyślnie!'))
+            return redirect('todo_list')
+    else:
+        form = RenovationTaskForm(current_property=current_property)
+
+    context = {
+        'current_property': current_property,
+        'form': form,
+        'title': _('Dodaj zadanie remontowe'),
+    }
+    return render(request, 'renovation/renovation_task_form.html', context)
+
+
+@login_required
+def renovation_task_edit(request, pk):
+    """Edit an existing renovation task"""
+    current_property = get_current_property(request)
+    if not current_property:
+        messages.warning(request, _('Proszę dodać nieruchomość przed rozpoczęciem pracy.'))
+        return redirect('property_add')
+
+    task = get_object_or_404(RenovationTask, pk=pk, related_property=current_property)
+
+    if request.method == 'POST':
+        form = RenovationTaskForm(request.POST, instance=task, current_property=current_property)
+        if form.is_valid():
+            form.save()
+            messages.success(request, _('Zadanie zostało zaktualizowane!'))
+            return redirect('todo_list')
+    else:
+        form = RenovationTaskForm(instance=task, current_property=current_property)
+
+    context = {
+        'current_property': current_property,
+        'form': form,
+        'title': _('Edytuj zadanie remontowe'),
+        'task': task,
+    }
+    return render(request, 'renovation/renovation_task_form.html', context)
+
+
+@login_required
+def renovation_task_delete(request, pk):
+    """Delete a renovation task"""
+    current_property = get_current_property(request)
+    if not current_property:
+        messages.warning(request, _('Proszę dodać nieruchomość przed rozpoczęciem pracy.'))
+        return redirect('property_add')
+
+    task = get_object_or_404(RenovationTask, pk=pk, related_property=current_property)
+
+    if request.method == 'POST':
+        task.delete()
+        messages.success(request, _('Zadanie zostało usunięte.'))
+        return redirect('todo_list')
+
+    context = {
+        'current_property': current_property,
+        'task': task,
+    }
+    return render(request, 'renovation/renovation_task_delete.html', context)
+
+
+@login_required
+def shopping_item_add(request):
+    """Add a new shopping item"""
+    current_property = get_current_property(request)
+    if not current_property:
+        messages.warning(request, _('Proszę dodać nieruchomość przed rozpoczęciem pracy.'))
+        return redirect('property_add')
+
+    if request.method == 'POST':
+        form = ShoppingItemForm(request.POST, current_property=current_property)
+        if form.is_valid():
+            item = form.save(commit=False)
+            item.related_property = current_property
+            item.save()
+            messages.success(request, _('Przedmiot został dodany pomyślnie!'))
+            return redirect('todo_list')
+    else:
+        form = ShoppingItemForm(current_property=current_property)
+
+    context = {
+        'current_property': current_property,
+        'form': form,
+        'title': _('Dodaj przedmiot do kupienia'),
+    }
+    return render(request, 'renovation/shopping_item_form.html', context)
+
+
+@login_required
+def shopping_item_edit(request, pk):
+    """Edit an existing shopping item"""
+    current_property = get_current_property(request)
+    if not current_property:
+        messages.warning(request, _('Proszę dodać nieruchomość przed rozpoczęciem pracy.'))
+        return redirect('property_add')
+
+    item = get_object_or_404(ShoppingItem, pk=pk, related_property=current_property)
+
+    if request.method == 'POST':
+        form = ShoppingItemForm(request.POST, instance=item, current_property=current_property)
+        if form.is_valid():
+            form.save()
+            messages.success(request, _('Przedmiot został zaktualizowany!'))
+            return redirect('todo_list')
+    else:
+        form = ShoppingItemForm(instance=item, current_property=current_property)
+
+    context = {
+        'current_property': current_property,
+        'form': form,
+        'title': _('Edytuj przedmiot do kupienia'),
+        'item': item,
+    }
+    return render(request, 'renovation/shopping_item_form.html', context)
+
+
+@login_required
+def shopping_item_delete(request, pk):
+    """Delete a shopping item"""
+    current_property = get_current_property(request)
+    if not current_property:
+        messages.warning(request, _('Proszę dodać nieruchomość przed rozpoczęciem pracy.'))
+        return redirect('property_add')
+
+    item = get_object_or_404(ShoppingItem, pk=pk, related_property=current_property)
+
+    if request.method == 'POST':
+        item.delete()
+        messages.success(request, _('Przedmiot został usunięty.'))
+        return redirect('todo_list')
+
+    context = {
+        'current_property': current_property,
+        'item': item,
+    }
+    return render(request, 'renovation/shopping_item_delete.html', context)

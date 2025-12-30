@@ -213,6 +213,9 @@ msgstr "Progress"
 msgid "Sesje"
 msgstr "Sessions"
 
+msgid "Opcje"
+msgstr "Options"
+
 msgid "Admin"
 msgstr "Admin"
 
@@ -248,17 +251,35 @@ msgstr "Select Language"
 msgid "Lista zakupów"
 msgstr "Purchases List"
 
+msgid "Wszystkie zakupy"
+msgstr "All Purchases"
+
 msgid "Całkowita kwota"
 msgstr "Total Amount"
 
+msgid "Suma wydatków"
+msgstr "Total Expenses"
+
 msgid "Lista postępu"
 msgstr "Progress List"
+
+msgid "Postępy prac"
+msgstr "Work Progress"
 
 msgid "Pomieszczenie"
 msgstr "Room"
 
 msgid "Lista sesji pracy"
 msgstr "Work Sessions List"
+
+msgid "Sesje pracy"
+msgstr "Work Sessions"
+
+msgid "Łącznie przepracowanych godzin"
+msgstr "Total hours worked"
+
+msgid "Brak sesji pracy"
+msgstr "No work sessions"
 
 msgid "Czas rozpoczęcia"
 msgstr "Start Time"
@@ -560,8 +581,17 @@ msgstr "Progress Notes"
 msgid "Postęp (%)"
 msgstr "Progress (%)"
 
+msgid "Progress (%)"
+msgstr "Progress (%)"
+
 msgid "Zapisz pomieszczenie"
 msgstr "Save Room"
+
+msgid "Room Type"
+msgstr "Room Type"
+
+msgid "Short Name"
+msgstr "Short Name"
 
 msgid "Wymiary"
 msgstr "Dimensions"
@@ -598,6 +628,9 @@ msgstr "Wallpaper"
 msgid "Fototapeta"
 msgstr "Photo Wallpaper"
 
+msgid "Płytki"
+msgstr "Tiles"
+
 msgid "Sztukateria"
 msgstr "Stucco"
 
@@ -624,3 +657,375 @@ msgstr "Custom Room Name"
 
 msgid "Wypełnij gdy wybrano \"Inne - Własna nazwa\""
 msgstr "Fill in when \"Other - Custom Name\" is selected"
+
+# Dropdown mapping
+msgid "Zarządzanie opcjami"
+msgstr "Options Management"
+
+msgid "Zarządzaj opcjami dla wszystkich pól wyboru"
+msgstr "Manage options for all dropdown fields"
+
+msgid "Dodaj opcję"
+msgstr "Add Option"
+
+msgid "Typ pomieszczenia"
+msgstr "Room Type"
+
+msgid "Kategoria zakupu"
+msgstr "Purchase Category"
+
+msgid "Typ podłogi"
+msgstr "Floor Type"
+
+msgid "Wykończenie ścian"
+msgstr "Wall Finish"
+
+msgid "Wartość"
+msgstr "Value"
+
+msgid "Nazwa PL"
+msgstr "Name PL"
+
+msgid "Nazwa EN"
+msgstr "Name EN"
+
+msgid "Kolejność"
+msgstr "Order"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Akcje"
+msgstr "Actions"
+
+msgid "Aktywna"
+msgstr "Active"
+
+msgid "Nieaktywna"
+msgstr "Inactive"
+
+msgid "Typ pola"
+msgstr "Field Type"
+
+msgid "Kolejność wyświetlania"
+msgstr "Display Order"
+
+msgid "Wartość (klucz)"
+msgstr "Value (key)"
+
+msgid "Etykieta (PL)"
+msgstr "Label (PL)"
+
+msgid "Etykieta (EN)"
+msgstr "Label (EN)"
+
+msgid "Zapisz opcję"
+msgstr "Save Option"
+
+msgid "Nazwa po polsku"
+msgstr "Name in Polish"
+
+msgid "Nazwa po angielsku"
+msgstr "Name in English"
+
+msgid "np. salon, płytki"
+msgstr "e.g. salon, tiles"
+
+msgid "Edytuj opcję"
+msgstr "Edit Option"
+
+msgid "Usuń opcję"
+msgstr "Delete Option"
+
+msgid "Czy na pewno chcesz usunąć tę opcję?"
+msgstr "Are you sure you want to delete this option?"
+
+# Equipment management
+msgid "Narzędzia/Sprzęt"
+msgstr "Tools/Equipment"
+
+msgid "Zarządzaj swoim sprzętem i narzędziami"
+msgstr "Manage your equipment and tools"
+
+msgid "Brak sprzętu. Dodaj pierwsze narzędzie/sprzęt."
+msgstr "No equipment. Add your first tool/equipment."
+
+msgid "Dodaj sprzęt"
+msgstr "Add Equipment"
+
+msgid "Dodaj narzędzie/sprzęt"
+msgstr "Add Tool/Equipment"
+
+msgid "Edytuj narzędzie/sprzęt"
+msgstr "Edit Tool/Equipment"
+
+msgid "Nazwa narzędzia/sprzętu"
+msgstr "Tool/Equipment Name"
+
+msgid "Stan techniczny"
+msgstr "Condition"
+
+msgid "OK - Sprawny"
+msgstr "OK - Working"
+
+msgid "Uszkodzony"
+msgstr "Damaged"
+
+msgid "Zepsuty"
+msgstr "Broken"
+
+msgid "Brakuje części"
+msgstr "Missing Parts"
+
+msgid "Wymagająca naprawy"
+msgstr "Needs Repair"
+
+msgid "Przeznaczenie"
+msgstr "Purpose"
+
+msgid "Do czego głównie służy to narzędzie/sprzęt"
+msgstr "What this tool/equipment is mainly used for"
+
+msgid "Stary sprzęt"
+msgstr "Old Equipment"
+
+msgid "Zaznacz jeśli nie posiadasz danych o zakupie"
+msgstr "Check if you don't have purchase data"
+
+msgid "Cena zakupu"
+msgstr "Purchase Price"
+
+msgid "Miejsce zakupu"
+msgstr "Place of Purchase"
+
+msgid "Sprzedany"
+msgstr "Sold"
+
+msgid "Zapisz sprzęt"
+msgstr "Save Equipment"
+
+msgid "Przypisany"
+msgstr "Assigned"
+
+msgid "Dostępny"
+msgstr "Available"
+
+msgid "Sprzedany"
+msgstr "Sold"
+
+msgid "Zwolnij sprzęt"
+msgstr "Release Equipment"
+
+msgid "Czy na pewno chcesz zwolnić ten sprzęt z nieruchomości?"
+msgstr "Are you sure you want to release this equipment from the property?"
+
+msgid "Przypisany od"
+msgstr "Assigned Since"
+
+msgid "Po zwolnieniu sprzętu, przypisanie zostanie zakończone dzisiejszą datą. Historia przypisań będzie zachowana."
+msgstr "After releasing the equipment, the assignment will be ended with today's date. Assignment history will be preserved."
+
+msgid "Tak, zwolnij"
+msgstr "Yes, Release"
+
+msgid "Przypisanie sprzętu do nieruchomości umożliwi śledzenie, gdzie obecnie się znajduje. Historia przypisań będzie zachowana."
+msgstr "Assigning equipment to a property will allow tracking where it is currently located. Assignment history will be preserved."
+
+msgid "Usuń sprzęt"
+msgstr "Delete Equipment"
+
+msgid "Czy na pewno chcesz usunąć ten sprzęt?"
+msgstr "Are you sure you want to delete this equipment?"
+
+msgid "Ta operacja jest nieodwracalna. Wszystkie zdjęcia i historia przypisań również zostaną usunięte."
+msgstr "This operation is irreversible. All photos and assignment history will also be deleted."
+
+msgid "Tak, usuń"
+msgstr "Yes, Delete"
+
+msgid "Usuń zdjęcie"
+msgstr "Delete Photo"
+
+msgid "Czy na pewno chcesz usunąć to zdjęcie?"
+msgstr "Are you sure you want to delete this photo?"
+
+msgid "Ta operacja jest nieodwracalna."
+msgstr "This operation is irreversible."
+
+msgid "Dodaj zdjęcie sprzętu"
+msgstr "Add Equipment Photo"
+
+msgid "Edytuj zdjęcie sprzętu"
+msgstr "Edit Equipment Photo"
+
+msgid "Niższe liczby pojawiają się jako pierwsze (np. 1 pojawi się przed 5). Użyj wielokrotności 10 (10, 20, 30), aby łatwiej można było wstawiać nowe opcje później."
+msgstr "Lower numbers appear first (e.g., 1 appears before 5). Use multiples of 10 (10, 20, 30) to make it easier to insert new options later."
+
+msgid "Panel administracyjny dla tego modelu został wyłączony. Użyj nowoczesnego formularza poniżej."
+msgstr "The admin panel for this model has been disabled. Please use the modern form below."
+
+# To-Do List
+msgid "Lista zadań"
+msgstr "To-Do List"
+
+msgid "Zadania"
+msgstr "Tasks"
+
+msgid "Zarządzaj zadaniami remontowymi i zakupami"
+msgstr "Manage renovation tasks and shopping"
+
+msgid "Dodaj zadanie"
+msgstr "Add Task"
+
+msgid "Dodaj zakup"
+msgstr "Add Purchase"
+
+msgid "Zadania remontowe"
+msgstr "Renovation Tasks"
+
+msgid "Lista zakupów"
+msgstr "Shopping List"
+
+msgid "Ukończone"
+msgstr "Completed"
+
+msgid "Postęp"
+msgstr "Progress"
+
+msgid "Kupione"
+msgstr "Bought"
+
+msgid "Szacowany koszt"
+msgstr "Estimated Cost"
+
+msgid "Wszystkie"
+msgstr "All"
+
+msgid "Aktywne"
+msgstr "Active"
+
+msgid "Priorytet"
+msgstr "Priority"
+
+msgid "Brak zadań remontowych. Dodaj pierwsze zadanie!"
+msgstr "No renovation tasks. Add your first task!"
+
+msgid "Brak przedmiotów do kupienia. Dodaj pierwszy przedmiot!"
+msgstr "No items to buy. Add your first item!"
+
+msgid "Nie rozpoczęto"
+msgstr "Not Started"
+
+msgid "W trakcie"
+msgstr "In Progress"
+
+msgid "Zakończono"
+msgstr "Completed"
+
+msgid "Wstrzymano"
+msgstr "On Hold"
+
+msgid "Nie kupiono"
+msgstr "Not Bought"
+
+msgid "Zamówiono"
+msgstr "Ordered"
+
+msgid "Kupiono i dostarczone"
+msgstr "Bought & Delivered"
+
+msgid "szt."
+msgstr "pc"
+
+msgid "opakowanie"
+msgstr "package"
+
+msgid "Dodaj zadanie remontowe"
+msgstr "Add Renovation Task"
+
+msgid "Edytuj zadanie remontowe"
+msgstr "Edit Renovation Task"
+
+msgid "Usuń zadanie remontowe"
+msgstr "Delete Renovation Task"
+
+msgid "Dodaj przedmiot do kupienia"
+msgstr "Add Shopping Item"
+
+msgid "Edytuj przedmiot do kupienia"
+msgstr "Edit Shopping Item"
+
+msgid "Usuń przedmiot z listy zakupów"
+msgstr "Delete Shopping Item"
+
+msgid "Zadanie zostało dodane pomyślnie!"
+msgstr "Task added successfully!"
+
+msgid "Zadanie zostało zaktualizowane!"
+msgstr "Task updated successfully!"
+
+msgid "Zadanie zostało usunięte."
+msgstr "Task deleted."
+
+msgid "Przedmiot został dodany pomyślnie!"
+msgstr "Item added successfully!"
+
+msgid "Przedmiot został zaktualizowany!"
+msgstr "Item updated successfully!"
+
+msgid "Przedmiot został usunięty."
+msgstr "Item deleted."
+
+msgid "Czy na pewno chcesz usunąć to zadanie?"
+msgstr "Are you sure you want to delete this task?"
+
+msgid "Czy na pewno chcesz usunąć ten przedmiot?"
+msgstr "Are you sure you want to delete this item?"
+
+msgid "Zapisz zadanie"
+msgstr "Save Task"
+
+msgid "Zapisz przedmiot"
+msgstr "Save Item"
+
+msgid "Tytuł"
+msgstr "Title"
+
+msgid "Nazwa przedmiotu"
+msgstr "Item Name"
+
+msgid "Szczegóły"
+msgstr "Details"
+
+msgid "Sklep"
+msgstr "Store"
+
+msgid "Ilość"
+msgstr "Quantity"
+
+msgid "Jednostka miary"
+msgstr "Unit of Measure"
+
+msgid "Szacowana cena"
+msgstr "Estimated Price"
+
+msgid "Data rozpoczęcia"
+msgstr "Start Date"
+
+msgid "Data zakończenia"
+msgstr "End Date"
+
+msgid "Zadanie remontowe"
+msgstr "Renovation Task"
+
+msgid "Zadania remontowe"
+msgstr "Renovation Tasks"
+
+msgid "Przedmiot do kupienia"
+msgstr "Shopping Item"
+
+msgid "Przedmioty do kupienia"
+msgstr "Shopping Items"
+
+msgid "Nieruchomość"
+msgstr "Property"

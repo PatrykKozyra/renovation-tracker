@@ -50,4 +50,13 @@ urlpatterns = [
     path('equipment/photo/<int:pk>/delete/', views.equipment_photo_delete, name='equipment_photo_delete'),
     path('equipment/<int:equipment_pk>/assign/', views.equipment_assign, name='equipment_assign'),
     path('equipment/<int:equipment_pk>/unassign/', views.equipment_unassign, name='equipment_unassign'),
+
+    # To-Do List
+    path('todo/', views.todo_list, name='todo_list'),
+    path('todo/task/add/', views.renovation_task_add, name='renovation_task_add'),
+    path('todo/task/<int:pk>/edit/', views.renovation_task_edit, name='renovation_task_edit'),
+    path('todo/task/<int:pk>/delete/', views.renovation_task_delete, name='renovation_task_delete'),
+    path('todo/shopping/add/', views.shopping_item_add, name='shopping_item_add'),
+    path('todo/shopping/<int:pk>/edit/', views.shopping_item_edit, name='shopping_item_edit'),
+    path('todo/shopping/<int:pk>/delete/', views.shopping_item_delete, name='shopping_item_delete'),
 ]

@@ -122,57 +122,10 @@ class PurchaseCategoryAdmin(admin.ModelAdmin):
     get_total_spent.short_description = _('Suma wydatków')
 
 
-@admin.register(Purchase)
-class PurchaseAdmin(admin.ModelAdmin):
-    list_display = ['date', 'vendor', 'category', 'amount_display', 'description_short', 'has_receipt']
-    list_filter = ['category', 'date', 'vendor']
-    search_fields = ['vendor', 'description', 'notes']
-    date_hierarchy = 'date'
-    readonly_fields = ['created_at', 'updated_at', 'receipt_preview']
-    list_per_page = 50
-
-    fieldsets = (
-        (_('Podstawowe informacje'), {
-            'fields': ('date', 'category', 'vendor', 'amount')
-        }),
-        (_('Szczegóły'), {
-            'fields': ('description', 'notes')
-        }),
-        (_('Paragon'), {
-            'fields': ('receipt_photo', 'receipt_preview')
-        }),
-        (_('Metadane'), {
-            'fields': ('created_at', 'updated_at'),
-            'classes': ('collapse',)
-        }),
-    )
-
-    def amount_display(self, obj):
-        return format_html('<strong>{:.2f} PLN</strong>', obj.amount)
-    amount_display.short_description = _('Kwota')
-    amount_display.admin_order_field = 'amount'
-
-    def description_short(self, obj):
-        if len(obj.description) > 50:
-            return obj.description[:50] + '...'
-        return obj.description
-    description_short.short_description = _('Opis')
-
-    def has_receipt(self, obj):
-        if obj.receipt_photo:
-            return format_html('<span style="color: green;">✓</span>')
-        return format_html('<span style="color: red;">✗</span>')
-    has_receipt.short_description = _('Paragon')
-
-    def receipt_preview(self, obj):
-        if obj.receipt_photo:
-            return format_html(
-                '<a href="{}" target="_blank"><img src="{}" style="max-width: 300px; max-height: 300px;" /></a>',
-                obj.receipt_photo.url,
-                obj.receipt_photo.url
-            )
-        return _('Brak zdjęcia')
-    receipt_preview.short_description = _('Podgląd paragonu')
+# Purchase admin removed - use custom form at /purchases/add/ instead
+# @admin.register(Purchase)
+# class PurchaseAdmin(admin.ModelAdmin):
+#     ... (admin interface disabled to encourage use of modern UI)
 
 
 class RoomProgressPhotoInline(admin.TabularInline):
@@ -242,43 +195,10 @@ class RoomAdmin(admin.ModelAdmin):
     get_work_sessions_count.short_description = _('Sesje pracy')
 
 
-@admin.register(RoomProgress)
-class RoomProgressAdmin(admin.ModelAdmin):
-    list_display = ['room', 'date', 'description_short', 'get_photo_count', 'created_at']
-    list_filter = ['room', 'date']
-    search_fields = ['description', 'notes', 'room__name']
-    date_hierarchy = 'date'
-    readonly_fields = ['created_at', 'updated_at', 'get_photo_count']
-    inlines = [RoomProgressPhotoInline]
-    list_per_page = 50
-
-    fieldsets = (
-        (_('Podstawowe informacje'), {
-            'fields': ('room', 'date')
-        }),
-        (_('Postęp prac'), {
-            'fields': ('description', 'notes')
-        }),
-        (_('Statystyki'), {
-            'fields': ('get_photo_count',),
-            'classes': ('collapse',)
-        }),
-        (_('Metadane'), {
-            'fields': ('created_at', 'updated_at'),
-            'classes': ('collapse',)
-        }),
-    )
-
-    def description_short(self, obj):
-        if len(obj.description) > 60:
-            return obj.description[:60] + '...'
-        return obj.description
-    description_short.short_description = _('Opis')
-
-    def get_photo_count(self, obj):
-        count = obj.photos.count()
-        return format_html('<strong>{} zdjęć</strong>', count)
-    get_photo_count.short_description = _('Liczba zdjęć')
+# RoomProgress admin removed - use custom form at /progress/add/ instead
+# @admin.register(RoomProgress)
+# class RoomProgressAdmin(admin.ModelAdmin):
+#     ... (admin interface disabled to encourage use of modern UI)
 
 
 @admin.register(RoomProgressPhoto)
@@ -331,51 +251,10 @@ class RoomProgressPhotoAdmin(admin.ModelAdmin):
     photo_preview.short_description = _('Podgląd zdjęcia')
 
 
-@admin.register(WorkSession)
-class WorkSessionAdmin(admin.ModelAdmin):
-    list_display = ['date', 'start_time', 'end_time', 'get_duration', 'get_rooms_list', 'notes_short']
-    list_filter = ['date', 'rooms_worked_on']
-    search_fields = ['notes', 'rooms_worked_on__name']
-    date_hierarchy = 'date'
-    readonly_fields = ['created_at', 'updated_at', 'get_duration']
-    filter_horizontal = ['rooms_worked_on']
-    list_per_page = 50
-
-    fieldsets = (
-        (_('Czas'), {
-            'fields': ('date', 'start_time', 'end_time', 'get_duration')
-        }),
-        (_('Szczegóły'), {
-            'fields': ('notes', 'rooms_worked_on')
-        }),
-        (_('Metadane'), {
-            'fields': ('created_at', 'updated_at'),
-            'classes': ('collapse',)
-        }),
-    )
-
-    def get_duration(self, obj):
-        duration = obj.duration
-        if duration:
-            hours = duration.seconds // 3600
-            minutes = (duration.seconds % 3600) // 60
-            return format_html('<strong>{}h {}m</strong>', hours, minutes)
-        return "-"
-    get_duration.short_description = _('Czas trwania')
-
-    def get_rooms_list(self, obj):
-        rooms = obj.rooms_worked_on.all()
-        if rooms:
-            room_names = ', '.join([r.get_name_display() for r in rooms])
-            return room_names
-        return _('(brak)')
-    get_rooms_list.short_description = _('Pomieszczenia')
-
-    def notes_short(self, obj):
-        if len(obj.notes) > 50:
-            return obj.notes[:50] + '...'
-        return obj.notes
-    notes_short.short_description = _('Notatki')
+# WorkSession admin removed - use custom form at /sessions/add/ instead
+# @admin.register(WorkSession)
+# class WorkSessionAdmin(admin.ModelAdmin):
+#     ... (admin interface disabled to encourage use of modern UI)
 
 
 @admin.register(ElectricalCircuit)

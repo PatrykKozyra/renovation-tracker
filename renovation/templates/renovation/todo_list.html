@@ -1,0 +1,298 @@
+{% extends 'renovation/base.html' %}
+{% load i18n static %}
+
+{% block title %}{% trans "Lista zadań" %} - {% trans "Tracker Remontu" %}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .task-card {
+        transition: all 0.2s;
+        border-left: 4px solid #6c757d;
+    }
+    .task-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .task-card.priority-1 { border-left-color: #dc3545; }
+    .task-card.priority-2 { border-left-color: #fd7e14; }
+    .task-card.priority-3 { border-left-color: #ffc107; }
+    .task-card.priority-4 { border-left-color: #20c997; }
+    .task-card.priority-5 { border-left-color: #6c757d; }
+
+    .status-badge {
+        padding: 0.4rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+    .status-not-started { background-color: #e9ecef; color: #495057; }
+    .status-in-progress { background-color: #cfe2ff; color: #084298; }
+    .status-completed { background-color: #d1e7dd; color: #0f5132; }
+    .status-on-hold { background-color: #fff3cd; color: #664d03; }
+    .status-ordered { background-color: #cff4fc; color: #055160; }
+    .status-bought { background-color: #d1e7dd; color: #0f5132; }
+
+    .stats-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+    }
+    .tab-content { margin-top: 1.5rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2><i class="bi bi-list-check"></i> {% trans "Lista zadań" %}</h2>
+                    <p class="text-muted">{% trans "Zarządzaj zadaniami remontowymi i zakupami" %}</p>
+                </div>
+                <div>
+                    <div class="btn-group" role="group">
+                        <a href="{% url 'renovation_task_add' %}" class="btn btn-success">
+                            <i class="bi bi-plus-circle"></i> {% trans "Dodaj zadanie" %}
+                        </a>
+                        <a href="{% url 'shopping_item_add' %}" class="btn btn-primary">
+                            <i class="bi bi-cart-plus"></i> {% trans "Dodaj zakup" %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="stats-card">
+                <h5><i class="bi bi-hammer"></i> {% trans "Zadania remontowe" %}</h5>
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div>
+                        <h3 class="mb-0">{{ completed_renovation_tasks }}/{{ total_renovation_tasks }}</h3>
+                        <small>{% trans "Ukończone" %}</small>
+                    </div>
+                    <div class="text-end">
+                        {% widthratio completed_renovation_tasks total_renovation_tasks 100 as completion_pct %}
+                        <h4 class="mb-0">{{ completion_pct|default:0 }}%</h4>
+                        <small>{% trans "Postęp" %}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="stats-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                <h5><i class="bi bi-cart"></i> {% trans "Lista zakupów" %}</h5>
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div>
+                        <h3 class="mb-0">{{ completed_shopping_items }}/{{ total_shopping_items }}</h3>
+                        <small>{% trans "Kupione" %}</small>
+                    </div>
+                    <div class="text-end">
+                        <h4 class="mb-0">{{ total_estimated_shopping_cost|floatformat:2 }} PLN</h4>
+                        <small>{% trans "Szacowany koszt" %}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter tabs -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <ul class="nav nav-pills">
+                <li class="nav-item">
+                    <a class="nav-link {% if task_filter == 'all' %}active{% endif %}"
+                       href="?filter=all&type={{ task_type }}">
+                        {% trans "Wszystkie" %}
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if task_filter == 'active' %}active{% endif %}"
+                       href="?filter=active&type={{ task_type }}">
+                        {% trans "Aktywne" %}
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if task_filter == 'completed' %}active{% endif %}"
+                       href="?filter=completed&type={{ task_type }}">
+                        {% trans "Ukończone" %}
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Tabs for Tasks vs Shopping -->
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="tasks-tab" data-bs-toggle="tab"
+                    data-bs-target="#tasks" type="button" role="tab">
+                <i class="bi bi-hammer"></i> {% trans "Zadania remontowe" %} ({{ renovation_tasks.count }})
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="shopping-tab" data-bs-toggle="tab"
+                    data-bs-target="#shopping" type="button" role="tab">
+                <i class="bi bi-cart"></i> {% trans "Lista zakupów" %} ({{ shopping_items.count }})
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+        <!-- Renovation Tasks Tab -->
+        <div class="tab-pane fade show active" id="tasks" role="tabpanel">
+            {% if renovation_tasks %}
+                <div class="row g-3">
+                    {% for task in renovation_tasks %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card task-card priority-{{ task.priority }}">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h5 class="card-title mb-0">{{ task.title }}</h5>
+                                    <span class="status-badge status-{{ task.status }}">
+                                        {{ task.get_status_display }}
+                                    </span>
+                                </div>
+
+                                {% if task.room %}
+                                <p class="text-muted mb-2">
+                                    <i class="bi bi-door-open"></i> {{ task.room.get_name_display }}
+                                </p>
+                                {% endif %}
+
+                                {% if task.description %}
+                                <p class="card-text small">{{ task.description|truncatewords:15 }}</p>
+                                {% endif %}
+
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <small class="text-muted">
+                                        <i class="bi bi-flag-fill"></i> {% trans "Priorytet" %}: {{ task.priority }}
+                                    </small>
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="{% url 'renovation_task_edit' task.pk %}"
+                                           class="btn btn-outline-primary">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a href="{% url 'renovation_task_delete' task.pk %}"
+                                           class="btn btn-outline-danger">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                {% if task.start_date or task.end_date %}
+                                <hr>
+                                <small class="text-muted">
+                                    {% if task.start_date %}
+                                        <i class="bi bi-play-circle"></i> {{ task.start_date|date:"d.m.Y H:i" }}
+                                    {% endif %}
+                                    {% if task.end_date %}
+                                        <br><i class="bi bi-check-circle"></i> {{ task.end_date|date:"d.m.Y H:i" }}
+                                    {% endif %}
+                                </small>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-info mt-3">
+                    <i class="bi bi-info-circle"></i>
+                    {% trans "Brak zadań remontowych. Dodaj pierwsze zadanie!" %}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Shopping List Tab -->
+        <div class="tab-pane fade" id="shopping" role="tabpanel">
+            {% if shopping_items %}
+                <div class="row g-3">
+                    {% for item in shopping_items %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card task-card priority-{{ item.priority }}">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h5 class="card-title mb-0">{{ item.title }}</h5>
+                                    <span class="status-badge status-{{ item.status }}">
+                                        {{ item.get_status_display }}
+                                    </span>
+                                </div>
+
+                                {% if item.room %}
+                                <p class="text-muted mb-2">
+                                    <i class="bi bi-door-open"></i> {{ item.room.get_name_display }}
+                                </p>
+                                {% endif %}
+
+                                {% if item.vendor %}
+                                <p class="mb-1">
+                                    <i class="bi bi-shop"></i> <strong>{{ item.vendor }}</strong>
+                                </p>
+                                {% endif %}
+
+                                {% if item.quantity %}
+                                <p class="mb-1">
+                                    <i class="bi bi-boxes"></i> {{ item.quantity }} {{ item.get_unit_display }}
+                                </p>
+                                {% endif %}
+
+                                {% if item.estimated_price %}
+                                <p class="mb-2">
+                                    <i class="bi bi-currency-exchange"></i>
+                                    <strong>{{ item.total_estimated_cost|floatformat:2 }} PLN</strong>
+                                    {% if item.quantity and item.quantity > 1 %}
+                                        <small class="text-muted">({{ item.estimated_price|floatformat:2 }} PLN/{{ item.get_unit_display }})</small>
+                                    {% endif %}
+                                </p>
+                                {% endif %}
+
+                                {% if item.description %}
+                                <p class="card-text small text-muted">{{ item.description|truncatewords:15 }}</p>
+                                {% endif %}
+
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <small class="text-muted">
+                                        <i class="bi bi-flag-fill"></i> {% trans "Priorytet" %}: {{ item.priority }}
+                                    </small>
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="{% url 'shopping_item_edit' item.pk %}"
+                                           class="btn btn-outline-primary">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a href="{% url 'shopping_item_delete' item.pk %}"
+                                           class="btn btn-outline-danger">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-info mt-3">
+                    <i class="bi bi-info-circle"></i>
+                    {% trans "Brak przedmiotów do kupienia. Dodaj pierwszy przedmiot!" %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Back button -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> {% trans "Powrót do panelu" %}
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

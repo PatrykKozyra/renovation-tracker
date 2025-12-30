@@ -11,7 +11,16 @@
       "Bash(python manage.py:*)",
       "Bash(pip install:*)",
       "Bash(dir /b \"c:\\\\Users\\\\serav\\\\Documents\\\\CODE\\\\renovation-tracker\\\\renovation\"\")",
-      "Bash(if exist \"c:\\\\Users\\\\serav\\\\Documents\\\\CODE\\\\renovation-tracker\\\\renovation\\\\README.md\" del \"c:\\\\Users\\\\serav\\\\Documents\\\\CODE\\\\renovation-tracker\\\\renovation\\\\README.md\")"
+      "Bash(if exist \"c:\\\\Users\\\\serav\\\\Documents\\\\CODE\\\\renovation-tracker\\\\renovation\\\\README.md\" del \"c:\\\\Users\\\\serav\\\\Documents\\\\CODE\\\\renovation-tracker\\\\renovation\\\\README.md\")",
+      "Bash(pip show:*)",
+      "Bash(where:*)",
+      "Bash(python:*)",
+      "Bash(if not exist \"c:\\\\Users\\\\serav\\\\Documents\\\\CODE\\\\renovation-tracker\\\\renovation\\\\management\" mkdir \"c:\\\\Users\\\\serav\\\\Documents\\\\CODE\\\\renovation-tracker\\\\renovation\\\\management\")",
+      "Bash(if not exist \"c:\\\\Users\\\\serav\\\\Documents\\\\CODE\\\\renovation-tracker\\\\renovation\\\\management\\\\commands\" mkdir \"c:\\\\Users\\\\serav\\\\Documents\\\\CODE\\\\renovation-tracker\\\\renovation\\\\management\\\\commands\")",
+      "Bash(pybabel extract:*)",
+      "Bash(pybabel compile:*)",
+      "Bash(grep:*)",
+      "Bash(find:*)"
     ]
   }
 }

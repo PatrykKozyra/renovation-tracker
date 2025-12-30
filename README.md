@@ -4,14 +4,19 @@ A comprehensive Django-based application for tracking home renovation projects w
 
 ## Features
 
+- **Property Management**: Manage multiple properties with full address details
 - **Purchase Tracking**: Record all expenses with receipt photos, categories, and vendors
 - **Room Progress**: Document renovation progress for each room with multiple photo uploads
 - **Work Sessions**: Log work hours and track time spent on renovation
 - **Electrical Circuits**: Document electrical panel and circuit information
+- **Equipment Tracking**: Manage tools and equipment with photos and room assignments
+- **TODO System**: Organize renovation tasks and shopping lists by property
+- **Vendor Management**: Configurable dropdown options for vendors and categories
 - **Beautiful UI**: Modern Bootstrap 5 interface with responsive design
 - **Analytics Dashboard**: Visual charts and statistics using Chart.js
 - **Bilingual Support**: Full Polish/English language support
 - **User Authentication**: Secure login system (supports up to 5 users)
+- **Flexible Media Storage**: Configure media files location (D: drive by default)
 
 ## Quick Start
 
@@ -49,12 +54,17 @@ pip install -r requirements.txt
 python manage.py migrate
 ```
 
-5. **Create your first user:**
+5. **Populate vendor choices (optional):**
+```bash
+python manage.py populate_vendors
+```
+
+6. **Create your first user:**
 ```bash
 python manage.py createsuperuser
 ```
 
-6. **Start the server:**
+7. **Start the server:**
 ```bash
 # Windows
 run_server.bat
@@ -66,9 +76,18 @@ run_server.bat
 python manage.py runserver 8003
 ```
 
-7. **Access the application:**
+8. **Access the application:**
 - Main App: http://localhost:8003/
 - Admin Panel: http://localhost:8003/admin/
+
+## Media Storage Configuration
+
+By default, all uploaded files (photos, receipts) are stored on **D:\renovation-tracker-media\** to save space on C: drive.
+
+To change this location, edit [config/settings/base.py](config/settings/base.py:126-129):
+```python
+MEDIA_ROOT = Path('D:/renovation-tracker-media')  # Change this path as needed
+```
 
 ## Project Structure
 
@@ -90,8 +109,9 @@ renovation-tracker/
 │   ├── urls.py               # URL routing
 │   └── templates/            # HTML templates
 ├── static/                    # Static files (CSS, JS)
-├── media/                     # User uploads (photos)
+├── media/                     # Deprecated (now on D: drive)
 ├── locale/                    # Translation files
+├── D:/renovation-tracker-media/  # User uploads (photos)
 ├── requirements.txt           # Python dependencies
 └── requirements-prod.txt      # Production dependencies
 ```
@@ -108,6 +128,13 @@ renovation-tracker/
 
 ## Database Models
 
+### Property
+Manage multiple properties:
+- Name, full address, postal code, city, country
+- Renovation start/end dates
+- Active/inactive status
+- Owner association
+
 ### PurchaseCategory
 Categories for expenses: Equipment, Materials, Labor, Fuel, etc.
 
@@ -116,9 +143,10 @@ Track all renovation expenses with:
 - Date, amount, vendor, category
 - Description and notes
 - Receipt photo upload
+- Property association
 
 ### Room
-9 predefined rooms:
+9 predefined rooms per property:
 - Salon, Sypialnia, Kuchnia, Łazienka, Ubikacja
 - Pokój Dziecięcy, Biuro, Korytarz, Loggia
 
@@ -133,12 +161,39 @@ Log work time:
 - Date, start time, end time
 - Automatic duration calculation
 - Notes and rooms worked on
+- Property association
 
 ### ElectricalCircuit
 Document electrical system:
 - Circuit name, breaker number
 - Room assignment
 - Connected appliances, amperage
+
+### Equipment
+Track tools and equipment:
+- Name, serial number, purchase details
+- Multiple photo uploads
+- Room assignments
+- Owner association
+
+### RenovationTask
+Organize renovation work:
+- Title, description, priority
+- Status: Not Started, In Progress, Completed, On Hold
+- Automatic start/end date tracking
+- Room and property association
+
+### ShoppingItem
+Shopping list management:
+- Title, quantity, unit of measure
+- Status: Not Bought, Ordered, Bought & Delivered
+- Vendor selection, estimated price
+- Room and property association
+
+### DropdownChoice
+Configurable dropdown options:
+- Vendor management (Allegro, Castorama, Leroy Merlin, etc.)
+- Custom categories and options
 
 ## User Guide
 
@@ -165,6 +220,20 @@ All forms are accessible via the **Quick Actions** section on the dashboard:
    - Circuit name and breaker number
    - Room and amperage
    - Connected appliances
+
+5. **Manage TODO Lists**: Click "Zadania" to organize tasks and shopping
+   - **Renovation Tasks**: Track work items with status and priority
+   - **Shopping List**: Plan purchases with vendors and quantities
+   - Filter by status (All, Active, Completed)
+
+6. **Equipment Management**: Navigate to Equipment section
+   - Add tools and equipment with photos
+   - Assign equipment to rooms
+   - Track purchase information
+
+7. **Options Management**: Configure dropdown choices
+   - Manage vendor list
+   - Customize categories and options
 
 ### Viewing Data
 

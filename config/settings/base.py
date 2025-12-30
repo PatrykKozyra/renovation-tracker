@@ -49,6 +49,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # Custom middleware to redirect disabled admin URLs to modern forms
+    'renovation.middleware.AdminRedirectMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -125,7 +127,8 @@ STORAGES = {
 
 # Media files (User uploaded content)
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+# Store media files on D: drive to save space on C:
+MEDIA_ROOT = Path('D:/renovation-tracker-media')
 
 # Authentication
 LOGIN_URL = 'login'

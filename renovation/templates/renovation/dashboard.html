@@ -82,6 +82,41 @@
 </div>
 {% endif %}
 
+<!-- Quick Actions -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-lightning-fill"></i> {% trans "Szybkie akcje" %}
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <a href="{% url 'purchase_add' %}" class="btn btn-outline-primary w-100">
+                            <i class="bi bi-plus-circle"></i><br>{% trans "Dodaj zakup" %}
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{% url 'progress_add' %}" class="btn btn-outline-success w-100">
+                            <i class="bi bi-plus-circle"></i><br>{% trans "Dodaj postęp" %}
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{% url 'session_add' %}" class="btn btn-outline-warning w-100">
+                            <i class="bi bi-plus-circle"></i><br>{% trans "Dodaj sesję" %}
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{% url 'circuit_add' %}" class="btn btn-outline-info w-100">
+                            <i class="bi bi-lightning-fill"></i><br>{% trans "Dodaj obwód" %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Summary Statistics Cards -->
 <div class="row g-3 mb-4">
     <div class="col-md-3">
@@ -328,41 +363,6 @@
                     <i class="bi bi-inbox"></i> {% trans "Brak wpisów postępu" %}
                 </p>
                 {% endif %}
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Quick Actions -->
-<div class="row">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <i class="bi bi-lightning-fill"></i> {% trans "Szybkie akcje" %}
-            </div>
-            <div class="card-body">
-                <div class="row g-3">
-                    <div class="col-md-3">
-                        <a href="{% url 'purchase_add' %}" class="btn btn-outline-primary w-100">
-                            <i class="bi bi-plus-circle"></i><br>{% trans "Dodaj zakup" %}
-                        </a>
-                    </div>
-                    <div class="col-md-3">
-                        <a href="{% url 'progress_add' %}" class="btn btn-outline-success w-100">
-                            <i class="bi bi-plus-circle"></i><br>{% trans "Dodaj postęp" %}
-                        </a>
-                    </div>
-                    <div class="col-md-3">
-                        <a href="{% url 'session_add' %}" class="btn btn-outline-warning w-100">
-                            <i class="bi bi-plus-circle"></i><br>{% trans "Dodaj sesję" %}
-                        </a>
-                    </div>
-                    <div class="col-md-3">
-                        <a href="{% url 'circuit_add' %}" class="btn btn-outline-info w-100">
-                            <i class="bi bi-lightning-fill"></i><br>{% trans "Dodaj obwód" %}
-                        </a>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
