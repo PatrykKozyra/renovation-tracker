@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -m venv:*)",
+      "Bash(venvScriptspip install -r requirements.txt)",
+      "Bash(.\\\\venv\\\\Scripts\\\\pip install:*)",
+      "Bash(python -m pip install:*)",
+      "Bash(python -m django:*)",
+      "Bash(python manage.py check:*)",
+      "Bash(tree:*)",
+      "Bash(python manage.py:*)",
+      "Bash(pip install:*)",
+      "Bash(dir /b \"c:\\\\Users\\\\serav\\\\Documents\\\\CODE\\\\renovation-tracker\\\\renovation\"\")",
+      "Bash(if exist \"c:\\\\Users\\\\serav\\\\Documents\\\\CODE\\\\renovation-tracker\\\\renovation\\\\README.md\" del \"c:\\\\Users\\\\serav\\\\Documents\\\\CODE\\\\renovation-tracker\\\\renovation\\\\README.md\")"
+    ]
+  }
+}

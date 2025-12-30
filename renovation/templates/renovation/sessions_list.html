@@ -1,0 +1,87 @@
+{% extends 'renovation/base.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Sesje pracy" %} - {% trans "Tracker Remontu" %}{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1><i class="bi bi-clock-history"></i> {% trans "Sesje pracy" %}</h1>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="/admin/renovation/worksession/add/" class="btn btn-warning">
+            <i class="bi bi-plus-circle"></i> {% trans "Dodaj sesję" %}
+        </a>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="mb-0">{% trans "Łącznie przepracowanych godzin" %}: <span class="text-warning">{{ total_hours|floatformat:1 }}h</span></h4>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                {% if sessions %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>{% trans "Data" %}</th>
+                                <th>{% trans "Godzina" %}</th>
+                                <th>{% trans "Czas trwania" %}</th>
+                                <th>{% trans "Pomieszczenia" %}</th>
+                                <th>{% trans "Notatki" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for session in sessions %}
+                            <tr>
+                                <td>{{ session.date|date:"d.m.Y" }}</td>
+                                <td>
+                                    {{ session.start_time|time:"H:i" }}
+                                    {% if session.end_time %}
+                                    - {{ session.end_time|time:"H:i" }}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if session.duration %}
+                                    <span class="badge bg-warning">
+                                        {% with hours=session.duration.seconds|divisibleby:3600 %}
+                                        {{ session.duration.seconds|floatformat:0|divisibleby:3600 }}h
+                                        {{ session.duration.seconds|divisibleby:60|add:"-60" }}m
+                                        {% endwith %}
+                                    </span>
+                                    {% else %}
+                                    <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% for room in session.rooms_worked_on.all %}
+                                    <span class="badge bg-secondary">{{ room.get_name_display }}</span>
+                                    {% endfor %}
+                                </td>
+                                <td>{{ session.notes|truncatewords:10 }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-center text-muted py-5">
+                    <i class="bi bi-inbox" style="font-size: 3rem;"></i><br>
+                    {% trans "Brak sesji pracy" %}
+                </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

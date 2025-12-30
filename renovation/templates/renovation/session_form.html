@@ -1,0 +1,87 @@
+{% extends 'renovation/base.html' %}
+{% load static i18n crispy_forms_tags %}
+
+{% block title %}{{ title }} - {% trans "Tracker Remontu" %}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-card {
+        max-width: 900px;
+        margin: 2rem auto;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+    .form-header {
+        background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 0.5rem 0.5rem 0 0;
+    }
+    .form-body {
+        padding: 2rem;
+    }
+    .required label:after {
+        content: " *";
+        color: #dc3545;
+    }
+    .duration-preview {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-top: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="card form-card">
+        <div class="form-header">
+            <h2 class="mb-0">
+                <i class="bi bi-clock-history"></i> {{ title }}
+            </h2>
+        </div>
+        <div class="form-body">
+            {% crispy form %}
+            <div id="durationPreview" class="duration-preview" style="display: none;">
+                <strong><i class="bi bi-stopwatch"></i> {% trans "Czas trwania:" %}</strong>
+                <span id="durationText" class="ms-2 text-primary"></span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Calculate and display duration
+document.addEventListener('DOMContentLoaded', function() {
+    const startTimeInput = document.querySelector('input[name="start_time"]');
+    const endTimeInput = document.querySelector('input[name="end_time"]');
+    const durationPreview = document.getElementById('durationPreview');
+    const durationText = document.getElementById('durationText');
+
+    function calculateDuration() {
+        if (startTimeInput.value && endTimeInput.value) {
+            const start = new Date('2000-01-01 ' + startTimeInput.value);
+            const end = new Date('2000-01-01 ' + endTimeInput.value);
+
+            if (end > start) {
+                const diffMs = end - start;
+                const diffHrs = Math.floor(diffMs / 3600000);
+                const diffMins = Math.floor((diffMs % 3600000) / 60000);
+
+                durationText.textContent = `${diffHrs}h ${diffMins}min`;
+                durationPreview.style.display = 'block';
+            } else {
+                durationPreview.style.display = 'none';
+            }
+        }
+    }
+
+    if (startTimeInput && endTimeInput) {
+        startTimeInput.addEventListener('change', calculateDuration);
+        endTimeInput.addEventListener('change', calculateDuration);
+    }
+});
+</script>
+{% endblock %}

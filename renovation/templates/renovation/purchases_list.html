@@ -1,0 +1,75 @@
+{% extends 'renovation/base.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Zakupy" %} - {% trans "Tracker Remontu" %}{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1><i class="bi bi-receipt"></i> {% trans "Wszystkie zakupy" %}</h1>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="/admin/renovation/purchase/add/" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> {% trans "Dodaj zakup" %}
+        </a>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="mb-0">{% trans "Suma wydatków" %}: <span class="text-primary">{{ total_spent|floatformat:2 }} PLN</span></h4>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                {% if purchases %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>{% trans "Data" %}</th>
+                                <th>{% trans "Sklep" %}</th>
+                                <th>{% trans "Kategoria" %}</th>
+                                <th>{% trans "Opis" %}</th>
+                                <th class="text-end">{% trans "Kwota" %}</th>
+                                <th class="text-center">{% trans "Paragon" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for purchase in purchases %}
+                            <tr>
+                                <td>{{ purchase.date|date:"d.m.Y" }}</td>
+                                <td><strong>{{ purchase.vendor }}</strong></td>
+                                <td><span class="badge bg-secondary">{{ purchase.category.get_name_display }}</span></td>
+                                <td>{{ purchase.description|truncatewords:8 }}</td>
+                                <td class="text-end"><strong>{{ purchase.amount|floatformat:2 }} PLN</strong></td>
+                                <td class="text-center">
+                                    {% if purchase.receipt_photo %}
+                                    <span class="text-success"><i class="bi bi-check-circle-fill"></i></span>
+                                    {% else %}
+                                    <span class="text-muted"><i class="bi bi-x-circle"></i></span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-center text-muted py-5">
+                    <i class="bi bi-inbox" style="font-size: 3rem;"></i><br>
+                    {% trans "Brak zakupów" %}
+                </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

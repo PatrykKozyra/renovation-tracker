@@ -1,0 +1,3 @@
+#!/bin/bash
+echo "Starting Renovation Tracker on port 8003..."
+python manage.py runserver 8003

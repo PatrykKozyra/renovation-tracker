@@ -1,0 +1,432 @@
+{% extends 'renovation/base.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Panel" %} - {% trans "Tracker Remontu" %}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .chart-container {
+        position: relative;
+        height: 300px;
+        margin: 20px 0;
+    }
+    .progress-bar-custom {
+        height: 20px;
+        border-radius: 10px;
+    }
+    .room-card {
+        transition: transform 0.2s;
+    }
+    .room-card:hover {
+        transform: translateY(-5px);
+    }
+    .room-thumbnail {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 8px 8px 0 0;
+    }
+    .no-photo-placeholder {
+        width: 100%;
+        height: 150px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px 8px 0 0;
+        color: white;
+        font-size: 3rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="mb-3">
+            <i class="bi bi-speedometer2"></i> {% trans "Panel główny" %}
+        </h1>
+        <p class="text-muted">{% trans "Kompleksowy przegląd postępu remontu" %}</p>
+    </div>
+</div>
+
+<!-- Summary Statistics Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card stat-card bg-primary-soft">
+            <div class="stat-icon">
+                <i class="bi bi-cash-stack"></i>
+            </div>
+            <div class="stat-value">{{ total_spent|floatformat:2 }} PLN</div>
+            <div class="stat-label">{% trans "Całkowite wydatki" %}</div>
+            <div class="text-muted mt-2">
+                <small>{{ purchase_count }} {% trans "zakupów" %}</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card stat-card bg-success-soft">
+            <div class="stat-icon">
+                <i class="bi bi-clipboard-check"></i>
+            </div>
+            <div class="stat-value">{{ progress_entries_count }}</div>
+            <div class="stat-label">{% trans "Wpisów postępu" %}</div>
+            <div class="text-muted mt-2">
+                <small>{{ total_photos }} {% trans "zdjęć" %}</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card stat-card bg-warning-soft">
+            <div class="stat-icon">
+                <i class="bi bi-clock-history"></i>
+            </div>
+            <div class="stat-value">{{ month_work_hours|floatformat:1 }}h</div>
+            <div class="stat-label">{% trans "Godziny w tym miesiącu" %}</div>
+            <div class="text-muted mt-2">
+                <small>{% trans "z" %} {{ total_work_hours|floatformat:1 }}h {% trans "łącznie" %}</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card stat-card bg-info-soft">
+            <div class="stat-icon">
+                <i class="bi bi-calendar-check"></i>
+            </div>
+            <div class="stat-value">{{ month_sessions_count }}</div>
+            <div class="stat-label">{% trans "Sesji w tym miesiącu" %}</div>
+            <div class="text-muted mt-2">
+                <small>{% trans "z" %} {{ work_sessions_count }} {% trans "łącznie" %}</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row -->
+<div class="row mb-4">
+    <!-- Category Breakdown Pie Chart -->
+    <div class="col-lg-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-pie-chart-fill"></i> {% trans "Wydatki według kategorii" %}
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="categoryPieChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Monthly Spending Trends Line Chart -->
+    <div class="col-lg-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-graph-up"></i> {% trans "Trend wydatków (6 miesięcy)" %}
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="monthlyTrendChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Room Progress Status -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-house-door-fill"></i> {% trans "Status postępu pomieszczeń" %}
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    {% for room in room_status %}
+                    <div class="col-md-4 col-lg-3">
+                        <div class="card room-card h-100">
+                            {% if room.latest_photo %}
+                            <img src="{{ room.latest_photo }}" class="room-thumbnail" alt="{{ room.name }}">
+                            {% else %}
+                            <div class="no-photo-placeholder">
+                                <i class="bi bi-house"></i>
+                            </div>
+                            {% endif %}
+                            <div class="card-body">
+                                <h6 class="card-title">{{ room.name }}</h6>
+                                <div class="progress progress-bar-custom mb-2">
+                                    <div class="progress-bar bg-success" role="progressbar"
+                                         style="width: {{ room.progress_percentage }}%"
+                                         aria-valuenow="{{ room.progress_percentage }}"
+                                         aria-valuemin="0" aria-valuemax="100">
+                                        {{ room.progress_percentage }}%
+                                    </div>
+                                </div>
+                                <small class="text-muted">
+                                    <i class="bi bi-clipboard"></i> {{ room.progress_count }} {% trans "wpisów" %}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Purchases and Top Vendors -->
+<div class="row mb-4">
+    <!-- Recent Purchases (Last 10) -->
+    <div class="col-lg-8 mb-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-receipt"></i> {% trans "Ostatnie zakupy" %} (10)</span>
+                <a href="{% url 'purchases_list' %}" class="btn btn-sm btn-primary">
+                    {% trans "Zobacz wszystkie" %} →
+                </a>
+            </div>
+            <div class="card-body">
+                {% if recent_purchases %}
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover">
+                        <thead>
+                            <tr>
+                                <th>{% trans "Data" %}</th>
+                                <th>{% trans "Sklep" %}</th>
+                                <th>{% trans "Kategoria" %}</th>
+                                <th>{% trans "Opis" %}</th>
+                                <th class="text-end">{% trans "Kwota" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for purchase in recent_purchases %}
+                            <tr>
+                                <td>{{ purchase.date|date:"d.m.Y" }}</td>
+                                <td><strong>{{ purchase.vendor }}</strong></td>
+                                <td><span class="badge bg-secondary">{{ purchase.category.get_name_display }}</span></td>
+                                <td>{{ purchase.description|truncatewords:5 }}</td>
+                                <td class="text-end"><strong>{{ purchase.amount|floatformat:2 }} PLN</strong></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted text-center py-3">
+                    <i class="bi bi-inbox"></i> {% trans "Brak zakupów" %}
+                </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Vendors by Spending -->
+    <div class="col-lg-4 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-shop"></i> {% trans "Top sklepy" %}
+            </div>
+            <div class="card-body">
+                {% if top_vendors %}
+                <div class="list-group list-group-flush">
+                    {% for vendor in top_vendors %}
+                    <div class="list-group-item px-0">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>{{ vendor.vendor }}</strong><br>
+                                <small class="text-muted">{{ vendor.count }} {% trans "zakupów" %}</small>
+                            </div>
+                            <span class="badge bg-primary" style="font-size: 0.9rem;">
+                                {{ vendor.total|floatformat:2 }} PLN
+                            </span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted text-center py-3">
+                    <i class="bi bi-inbox"></i> {% trans "Brak danych" %}
+                </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Progress Updates -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-image"></i> {% trans "Ostatni postęp prac" %}</span>
+                <a href="{% url 'progress_list' %}" class="btn btn-sm btn-success">
+                    {% trans "Zobacz wszystkie" %} →
+                </a>
+            </div>
+            <div class="card-body">
+                {% if recent_progress %}
+                <div class="row g-3">
+                    {% for progress in recent_progress %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100">
+                            {% if progress.photos.first %}
+                            <img src="{{ progress.photos.first.photo.url }}"
+                                 class="card-img-top"
+                                 alt="{{ progress.room.get_name_display }}"
+                                 style="height: 200px; object-fit: cover;">
+                            {% endif %}
+                            <div class="card-body">
+                                <h6 class="card-title">{{ progress.room.get_name_display }}</h6>
+                                <p class="card-text"><small class="text-muted">{{ progress.date|date:"d.m.Y" }}</small></p>
+                                <p class="card-text">{{ progress.description|truncatewords:15 }}</p>
+                                <small class="text-muted">
+                                    <i class="bi bi-camera"></i> {{ progress.photos.count }} {% trans "zdjęć" %}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted text-center py-3">
+                    <i class="bi bi-inbox"></i> {% trans "Brak wpisów postępu" %}
+                </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-lightning-fill"></i> {% trans "Szybkie akcje" %}
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <a href="{% url 'purchase_add' %}" class="btn btn-outline-primary w-100">
+                            <i class="bi bi-plus-circle"></i><br>{% trans "Dodaj zakup" %}
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{% url 'progress_add' %}" class="btn btn-outline-success w-100">
+                            <i class="bi bi-plus-circle"></i><br>{% trans "Dodaj postęp" %}
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{% url 'session_add' %}" class="btn btn-outline-warning w-100">
+                            <i class="bi bi-plus-circle"></i><br>{% trans "Dodaj sesję" %}
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{% url 'circuit_add' %}" class="btn btn-outline-info w-100">
+                            <i class="bi bi-lightning-fill"></i><br>{% trans "Dodaj obwód" %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<script>
+// Category Pie Chart
+const categoryCtx = document.getElementById('categoryPieChart');
+if (categoryCtx) {
+    new Chart(categoryCtx, {
+        type: 'pie',
+        data: {
+            labels: {{ category_labels_json|safe }},
+            datasets: [{
+                data: {{ category_data_json|safe }},
+                backgroundColor: {{ category_colors_json|safe }},
+                borderWidth: 2,
+                borderColor: '#fff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            label += context.parsed.toFixed(2) + ' PLN';
+                            return label;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Monthly Trend Line Chart
+const monthlyCtx = document.getElementById('monthlyTrendChart');
+if (monthlyCtx) {
+    new Chart(monthlyCtx, {
+        type: 'line',
+        data: {
+            labels: {{ monthly_labels_json|safe }},
+            datasets: [{
+                label: '{% trans "Wydatki" %} (PLN)',
+                data: {{ monthly_amounts_json|safe }},
+                borderColor: '#36A2EB',
+                backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+                pointRadius: 5,
+                pointHoverRadius: 7
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.parsed.y.toFixed(2) + ' PLN';
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return value.toFixed(0) + ' PLN';
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+</script>
+{% endblock %}

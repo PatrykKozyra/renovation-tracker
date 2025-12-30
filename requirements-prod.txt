@@ -1,0 +1,7 @@
+-r requirements.txt
+
+# Production database
+psycopg2-binary==2.9.9
+
+# Production server
+gunicorn==21.2.0

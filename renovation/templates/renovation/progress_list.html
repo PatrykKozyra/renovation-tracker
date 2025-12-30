@@ -1,0 +1,68 @@
+{% extends 'renovation/base.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Postępy" %} - {% trans "Tracker Remontu" %}{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1><i class="bi bi-image"></i> {% trans "Postępy prac" %}</h1>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="/admin/renovation/roomprogress/add/" class="btn btn-success">
+            <i class="bi bi-plus-circle"></i> {% trans "Dodaj postęp" %}
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    {% if progress_entries %}
+    {% for progress in progress_entries %}
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-success text-white">
+                <strong>{{ progress.room.get_name_display }}</strong>
+                <span class="float-end">{{ progress.date|date:"d.m.Y" }}</span>
+            </div>
+            <div class="card-body">
+                <p>{{ progress.description }}</p>
+                {% if progress.notes %}
+                <p class="text-muted"><small><i class="bi bi-info-circle"></i> {{ progress.notes }}</small></p>
+                {% endif %}
+
+                {% if progress.photos.all %}
+                <div class="row g-2 mt-2">
+                    {% for photo in progress.photos.all|slice:":4" %}
+                    <div class="col-6 col-md-3">
+                        <a href="{{ photo.photo.url }}" target="_blank">
+                            <img src="{{ photo.photo.url }}" class="img-fluid rounded" alt="{{ photo.caption }}"
+                                 style="width: 100%; height: 100px; object-fit: cover;">
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% if progress.photos.count > 4 %}
+                <p class="text-muted mt-2 mb-0"><small>+{{ progress.photos.count|add:"-4" }} {% trans "więcej zdjęć" %}</small></p>
+                {% endif %}
+                {% endif %}
+            </div>
+            <div class="card-footer">
+                <small class="text-muted">
+                    <i class="bi bi-camera"></i> {{ progress.photos.count }} {% trans "zdjęć" %}
+                </small>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body text-center py-5">
+                <i class="bi bi-inbox" style="font-size: 3rem; color: #ccc;"></i>
+                <p class="text-muted mt-3">{% trans "Brak wpisów postępu" %}</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
