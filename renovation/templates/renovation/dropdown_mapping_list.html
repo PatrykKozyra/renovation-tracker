@@ -1,0 +1,99 @@
+{% extends 'renovation/base.html' %}
+{% load i18n static %}
+
+{% block title %}{% trans "Zarządzanie opcjami" %}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2><i class="bi bi-sliders"></i> {% trans "Zarządzanie opcjami" %}</h2>
+                    <p class="text-muted">{% trans "Zarządzaj opcjami dla wszystkich pól wyboru" %}</p>
+                </div>
+                <a href="{% url 'dropdown_choice_add' %}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> {% trans "Dodaj opcję" %}
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {% for choice_type, type_data in choices_by_type.items %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-list"></i> {{ type_data.label }}
+                    </h5>
+                    <span class="badge bg-primary">{{ type_data.choices|length }}</span>
+                </div>
+                <div class="card-body">
+                    {% if type_data.choices %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>{% trans "Wartość" %}</th>
+                                    <th>{% trans "Nazwa PL" %}</th>
+                                    <th>{% trans "Nazwa EN" %}</th>
+                                    <th>{% trans "Kolejność" %}</th>
+                                    <th>{% trans "Status" %}</th>
+                                    <th>{% trans "Akcje" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for choice in type_data.choices %}
+                                <tr>
+                                    <td><code>{{ choice.value }}</code></td>
+                                    <td>{{ choice.label_pl }}</td>
+                                    <td>{{ choice.label_en }}</td>
+                                    <td>{{ choice.display_order }}</td>
+                                    <td>
+                                        {% if choice.is_active %}
+                                            <span class="badge bg-success">{% trans "Aktywny" %}</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">{% trans "Nieaktywny" %}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <a href="{% url 'dropdown_choice_edit' choice.id %}"
+                                               class="btn btn-outline-primary"
+                                               title="{% trans 'Edytuj' %}">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <a href="{% url 'dropdown_choice_delete' choice.id %}"
+                                               class="btn btn-outline-danger"
+                                               title="{% trans 'Usuń' %}">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i>
+                        {% trans "Brak opcji dla tego typu. Dodaj pierwszą opcję." %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> {% trans "Powrót do panelu" %}
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

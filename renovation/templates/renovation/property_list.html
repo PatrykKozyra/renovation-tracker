@@ -1,0 +1,87 @@
+{% extends 'renovation/base.html' %}
+{% load i18n static %}
+
+{% block title %}{% trans "Zarządzaj nieruchomościami" %}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2><i class="bi bi-building"></i> {% trans "Zarządzaj nieruchomościami" %}</h2>
+                <a href="{% url 'property_add' %}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> {% trans "Dodaj nieruchomość" %}
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        {% for property in properties %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 {% if property.id == current_property.id %}border-primary{% endif %}">
+                <div class="card-body">
+                    {% if property.id == current_property.id %}
+                    <div class="badge bg-primary mb-2">
+                        <i class="bi bi-check-circle"></i> {% trans "Aktualna nieruchomość" %}
+                    </div>
+                    {% endif %}
+
+                    <h5 class="card-title">{{ property.name }}</h5>
+                    <p class="card-text text-muted">
+                        <i class="bi bi-geo-alt"></i> {{ property.full_address }}
+                    </p>
+
+                    {% if property.description %}
+                    <p class="card-text small">{{ property.description|truncatewords:20 }}</p>
+                    {% endif %}
+
+                    <div class="mb-2">
+                        {% if property.renovation_start_date %}
+                        <small class="text-muted">
+                            <i class="bi bi-calendar-check"></i>
+                            {% trans "Data rozpoczęcia remontu" %}: {{ property.renovation_start_date }}
+                        </small>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        {% if property.is_active %}
+                        <span class="badge bg-success">{% trans "Aktywny" %}</span>
+                        {% else %}
+                        <span class="badge bg-secondary">{% trans "Nieaktywny" %}</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="btn-group w-100" role="group">
+                        {% if property.id != current_property.id %}
+                        <a href="{% url 'property_switch' property.id %}" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-arrow-repeat"></i> {% trans "Przełącz" %}
+                        </a>
+                        {% endif %}
+                        <a href="{% url 'property_edit' property.id %}" class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-pencil"></i> {% trans "Edytuj" %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i>
+                {% trans "Brak nieruchomości. Dodaj swoją pierwszą nieruchomość, aby rozpocząć." %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> {% trans "Powrót do panelu" %}
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

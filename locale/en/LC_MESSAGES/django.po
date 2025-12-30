@@ -1,0 +1,626 @@
+# English translations for Renovation Tracker
+# Copyright (C) 2025
+# This file is distributed under the same license as the Renovation Tracker package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-01-01 12:00+0000\n"
+"PO-Revision-Date: 2025-01-01 12:00+0000\n"
+"Last-Translator: Auto\n"
+"Language-Team: English\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+# Dashboard
+msgid "Panel główny"
+msgstr "Dashboard"
+
+msgid "Kompleksowy przegląd postępu remontu"
+msgstr "Comprehensive renovation progress overview"
+
+msgid "Całkowite wydatki"
+msgstr "Total Expenses"
+
+msgid "zakupów"
+msgstr "purchases"
+
+msgid "Wpisów postępu"
+msgstr "Progress Entries"
+
+msgid "zdjęć"
+msgstr "photos"
+
+msgid "Godziny w tym miesiącu"
+msgstr "Hours This Month"
+
+msgid "z"
+msgstr "of"
+
+msgid "łącznie"
+msgstr "total"
+
+msgid "Sesji w tym miesiącu"
+msgstr "Sessions This Month"
+
+msgid "Wydatki według kategorii"
+msgstr "Expenses by Category"
+
+msgid "Trend wydatków (6 miesięcy)"
+msgstr "Spending Trend (6 months)"
+
+msgid "Status postępu pomieszczeń"
+msgstr "Room Progress Status"
+
+msgid "wpisów"
+msgstr "entries"
+
+msgid "Ostatnie zakupy"
+msgstr "Recent Purchases"
+
+msgid "Zobacz wszystkie"
+msgstr "View All"
+
+msgid "Data"
+msgstr "Date"
+
+msgid "Sklep"
+msgstr "Vendor"
+
+msgid "Kategoria"
+msgstr "Category"
+
+msgid "Opis"
+msgstr "Description"
+
+msgid "Kwota"
+msgstr "Amount"
+
+msgid "Brak zakupów"
+msgstr "No purchases"
+
+msgid "Top sklepy"
+msgstr "Top Vendors"
+
+msgid "Brak danych"
+msgstr "No data"
+
+msgid "Ostatni postęp prac"
+msgstr "Recent Progress Updates"
+
+msgid "Brak wpisów postępu"
+msgstr "No progress entries"
+
+msgid "Szybkie akcje"
+msgstr "Quick Actions"
+
+msgid "Dodaj zakup"
+msgstr "Add Purchase"
+
+msgid "Dodaj postęp"
+msgstr "Add Progress"
+
+msgid "Dodaj sesję"
+msgstr "Add Session"
+
+msgid "Dodaj obwód"
+msgstr "Add Circuit"
+
+msgid "Panel admin"
+msgstr "Admin Panel"
+
+# Forms
+msgid "Zapisz zakup"
+msgstr "Save Purchase"
+
+msgid "Anuluj"
+msgstr "Cancel"
+
+msgid "Dodaj postęp"
+msgstr "Add Progress"
+
+msgid "Zapisz sesję"
+msgstr "Save Session"
+
+msgid "Zapisz obwód"
+msgstr "Save Circuit"
+
+msgid "Filtruj"
+msgstr "Filter"
+
+msgid "Wyczyść"
+msgstr "Clear"
+
+msgid "Wszystkie kategorie"
+msgstr "All Categories"
+
+msgid "Wpisz nazwę sklepu..."
+msgstr "Enter vendor name..."
+
+msgid "Data od"
+msgstr "Date From"
+
+msgid "Data do"
+msgstr "Date To"
+
+# Form titles
+msgid "Dodaj zakup"
+msgstr "Add Purchase"
+
+msgid "Edytuj zakup"
+msgstr "Edit Purchase"
+
+msgid "Dodaj postęp"
+msgstr "Add Progress"
+
+msgid "Dodaj sesję pracy"
+msgstr "Add Work Session"
+
+msgid "Dodaj obwód elektryczny"
+msgstr "Add Electrical Circuit"
+
+msgid "Zdjęcia"
+msgstr "Photos"
+
+msgid "Możesz wybrać wiele zdjęć naraz"
+msgstr "You can select multiple photos at once"
+
+msgid "Czas trwania:"
+msgstr "Duration:"
+
+msgid "Podgląd:"
+msgstr "Preview:"
+
+# Messages
+msgid "Zakup został dodany pomyślnie!"
+msgstr "Purchase added successfully!"
+
+msgid "Zakup został zaktualizowany!"
+msgstr "Purchase updated successfully!"
+
+msgid "Postęp został dodany pomyślnie!"
+msgstr "Progress added successfully!"
+
+msgid "Sesja została dodana pomyślnie!"
+msgstr "Session added successfully!"
+
+msgid "Obwód elektryczny został dodany!"
+msgstr "Electrical circuit added successfully!"
+
+msgid "Zalogowano pomyślnie!"
+msgstr "Logged in successfully!"
+
+msgid "Wylogowano pomyślnie."
+msgstr "Logged out successfully."
+
+msgid "Nieprawidłowa nazwa użytkownika lub hasło."
+msgstr "Invalid username or password."
+
+# Navigation
+msgid "Panel"
+msgstr "Dashboard"
+
+msgid "Zakupy"
+msgstr "Purchases"
+
+msgid "Postępy"
+msgstr "Progress"
+
+msgid "Sesje"
+msgstr "Sessions"
+
+msgid "Admin"
+msgstr "Admin"
+
+msgid "Wyloguj"
+msgstr "Logout"
+
+# Login
+msgid "Logowanie"
+msgstr "Login"
+
+msgid "Tracker Remontu"
+msgstr "Renovation Tracker"
+
+msgid "Witamy w systemie śledzenia remontu"
+msgstr "Welcome to the renovation tracking system"
+
+msgid "Zaloguj się aby kontynuować"
+msgstr "Please log in to continue"
+
+msgid "Nazwa użytkownika"
+msgstr "Username"
+
+msgid "Hasło"
+msgstr "Password"
+
+msgid "Zaloguj"
+msgstr "Log In"
+
+msgid "Wybierz język"
+msgstr "Select Language"
+
+# Lists
+msgid "Lista zakupów"
+msgstr "Purchases List"
+
+msgid "Całkowita kwota"
+msgstr "Total Amount"
+
+msgid "Lista postępu"
+msgstr "Progress List"
+
+msgid "Pomieszczenie"
+msgstr "Room"
+
+msgid "Lista sesji pracy"
+msgstr "Work Sessions List"
+
+msgid "Czas rozpoczęcia"
+msgstr "Start Time"
+
+msgid "Czas zakończenia"
+msgstr "End Time"
+
+msgid "Czas trwania"
+msgstr "Duration"
+
+msgid "Notatki"
+msgstr "Notes"
+
+msgid "Całkowity czas"
+msgstr "Total Time"
+
+msgid "godzin"
+msgstr "hours"
+
+# Room names
+msgid "Salon"
+msgstr "Living Room"
+
+msgid "Sypialnia"
+msgstr "Bedroom"
+
+msgid "Kuchnia"
+msgstr "Kitchen"
+
+msgid "Łazienka"
+msgstr "Bathroom"
+
+msgid "Ubikacja"
+msgstr "Toilet"
+
+msgid "Pokój Dziecięcy"
+msgstr "Children's Room"
+
+msgid "Biuro"
+msgstr "Office"
+
+msgid "Korytarz"
+msgstr "Corridor"
+
+msgid "Loggia"
+msgstr "Loggia"
+
+# Category names
+msgid "Sprzęt"
+msgstr "Equipment"
+
+msgid "Materiały"
+msgstr "Materials"
+
+msgid "Robocizna"
+msgstr "Labor"
+
+msgid "Paliwo"
+msgstr "Fuel"
+
+msgid "Usługi"
+msgstr "Services"
+
+msgid "Narzędzia"
+msgstr "Tools"
+
+msgid "Elektryka"
+msgstr "Electrical"
+
+msgid "Hydraulika"
+msgstr "Plumbing"
+
+msgid "Wykończenie"
+msgstr "Finishing"
+
+msgid "Inne"
+msgstr "Other"
+
+# Model field labels - Purchase
+msgid "Zdjęcie paragonu"
+msgstr "Receipt Photo"
+
+msgid "Sklep/Dostawca"
+msgstr "Vendor/Store"
+
+msgid "Data zakupu"
+msgstr "Purchase Date"
+
+# Model field labels - RoomProgress
+msgid "Opis postępu"
+msgstr "Progress Description"
+
+msgid "Dodatkowe notatki"
+msgstr "Additional Notes"
+
+# Model field labels - WorkSession
+msgid "Godzina rozpoczęcia"
+msgstr "Start Time"
+
+msgid "Godzina zakończenia"
+msgstr "End Time"
+
+msgid "Pomieszczenie"
+msgstr "Room"
+
+msgid "Pomieszczenia"
+msgstr "Rooms"
+
+# Other common field labels
+msgid "Nazwa obwodu"
+msgstr "Circuit Name"
+
+msgid "Numer bezpiecznika/wyłącznika"
+msgstr "Breaker Number"
+
+msgid "Podłączone urządzenia"
+msgstr "Connected Appliances"
+
+msgid "Amperaż (A)"
+msgstr "Amperage (A)"
+
+msgid "Lista urządzeń podłączonych do tego obwodu"
+msgstr "List of devices connected to this circuit"
+
+msgid "Natężenie prądu w amperach"
+msgstr "Current intensity in amperes"
+
+msgid "Nazwa kategorii"
+msgstr "Category Name"
+
+msgid "Powierzchnia (m²)"
+msgstr "Surface Area (m²)"
+
+msgid "Nazwa pomieszczenia"
+msgstr "Room Name"
+
+msgid "Data utworzenia"
+msgstr "Created Date"
+
+msgid "Data aktualizacji"
+msgstr "Updated Date"
+
+msgid "Podpis"
+msgstr "Caption"
+
+msgid "Data przesłania"
+msgstr "Upload Date"
+
+msgid "Postęp"
+msgstr "Progress"
+
+msgid "Zdjęcie"
+msgstr "Photo"
+
+# Property model fields
+msgid "Nieruchomość"
+msgstr "Property"
+
+msgid "Nieruchomości"
+msgstr "Properties"
+
+msgid "Nazwa"
+msgstr "Name"
+
+msgid "Ulica i numer"
+msgstr "Street and Number"
+
+msgid "Kod pocztowy"
+msgstr "Postal Code"
+
+msgid "Miasto"
+msgstr "City"
+
+msgid "Kraj"
+msgstr "Country"
+
+msgid "Właściciel"
+msgstr "Owner"
+
+msgid "Aktywny"
+msgstr "Active"
+
+msgid "Data rozpoczęcia remontu"
+msgstr "Renovation Start Date"
+
+msgid "Data zakończenia remontu"
+msgstr "Renovation End Date"
+
+msgid "Zapisz nieruchomość"
+msgstr "Save Property"
+
+msgid "Dodaj nieruchomość"
+msgstr "Add Property"
+
+msgid "Edytuj nieruchomość"
+msgstr "Edit Property"
+
+msgid "Wybierz nieruchomość"
+msgstr "Select Property"
+
+msgid "Aktualna nieruchomość"
+msgstr "Current Property"
+
+msgid "Przełącz nieruchomość"
+msgstr "Switch Property"
+
+msgid "Zarządzaj nieruchomościami"
+msgstr "Manage Properties"
+
+msgid "Nieruchomość została dodana pomyślnie!"
+msgstr "Property added successfully!"
+
+msgid "Nieruchomość została zaktualizowana!"
+msgstr "Property updated successfully!"
+
+msgid "Przełączono na nieruchomość: {}"
+msgstr "Switched to property: {}"
+
+msgid "Proszę dodać nieruchomość przed rozpoczęciem pracy."
+msgstr "Please add a property before starting work."
+
+msgid "Nieaktywny"
+msgstr "Inactive"
+
+msgid "Przełącz"
+msgstr "Switch"
+
+msgid "Edytuj"
+msgstr "Edit"
+
+msgid "Brak nieruchomości. Dodaj swoją pierwszą nieruchomość, aby rozpocząć."
+msgstr "No properties found. Add your first property to get started."
+
+msgid "Powrót do panelu"
+msgstr "Back to Dashboard"
+
+# Room management
+msgid "Dodaj pomieszczenie"
+msgstr "Add Room"
+
+msgid "Edytuj pomieszczenie"
+msgstr "Edit Room"
+
+msgid "Pomieszczenie zostało dodane pomyślnie!"
+msgstr "Room added successfully!"
+
+msgid "Pomieszczenie zostało zaktualizowane!"
+msgstr "Room updated successfully!"
+
+msgid "Brak pomieszczeń. Dodaj pierwsze pomieszczenie dla tej nieruchomości."
+msgstr "No rooms found. Add your first room for this property."
+
+msgid "Szczegóły"
+msgstr "Details"
+
+msgid "Powrót do listy"
+msgstr "Back to List"
+
+# Room fields
+msgid "Krótka nazwa"
+msgstr "Short Name"
+
+msgid "Szerokość (m)"
+msgstr "Width (m)"
+
+msgid "Długość (m)"
+msgstr "Length (m)"
+
+msgid "Wysokość (m)"
+msgstr "Height (m)"
+
+msgid "Szerokość"
+msgstr "Width"
+
+msgid "Długość"
+msgstr "Length"
+
+msgid "Wysokość"
+msgstr "Height"
+
+msgid "Typ podłogi"
+msgstr "Floor Type"
+
+msgid "Wykończenie ścian"
+msgstr "Wall Finishes"
+
+msgid "Oddziel przecinkami, np: farba,tapeta"
+msgstr "Separate with commas, e.g: paint,wallpaper"
+
+msgid "Aktualny status"
+msgstr "Current Status"
+
+msgid "Plany na przyszłość"
+msgstr "Future Plans"
+
+msgid "Notatki o postępie"
+msgstr "Progress Notes"
+
+msgid "Postęp (%)"
+msgstr "Progress (%)"
+
+msgid "Zapisz pomieszczenie"
+msgstr "Save Room"
+
+msgid "Wymiary"
+msgstr "Dimensions"
+
+msgid "Wykończenia"
+msgstr "Finishes"
+
+msgid "Status i postęp"
+msgstr "Status and Progress"
+
+msgid "Podłoga"
+msgstr "Floor"
+
+# Floor types
+msgid "Płytki"
+msgstr "Tiles"
+
+msgid "Panele"
+msgstr "Panels"
+
+msgid "Parkiet"
+msgstr "Parquet"
+
+msgid "Wykładzina dywanowa"
+msgstr "Carpet"
+
+# Wall finishes
+msgid "Farba"
+msgstr "Paint"
+
+msgid "Tapeta"
+msgstr "Wallpaper"
+
+msgid "Fototapeta"
+msgstr "Photo Wallpaper"
+
+msgid "Sztukateria"
+msgstr "Stucco"
+
+msgid "Boazeria"
+msgstr "Wainscoting"
+
+msgid "Panele ścienne"
+msgstr "Wall Panels"
+
+msgid "Kamień dekoracyjny"
+msgstr "Decorative Stone"
+
+msgid "Beton architektoniczny"
+msgstr "Architectural Concrete"
+
+msgid "Mikrocement"
+msgstr "Microcement"
+
+msgid "Inne - Własna nazwa"
+msgstr "Other - Custom Name"
+
+msgid "Własna nazwa pomieszczenia"
+msgstr "Custom Room Name"
+
+msgid "Wypełnij gdy wybrano \"Inne - Własna nazwa\""
+msgstr "Fill in when \"Other - Custom Name\" is selected"

@@ -191,6 +191,16 @@
                             <i class="bi bi-clock-history"></i> {% trans "Sesje" %}
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'equipment' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'equipment_list' %}">
+                            <i class="bi bi-tools"></i> {% trans "Sprzęt" %}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'dropdown_mapping' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'dropdown_mapping_list' %}">
+                            <i class="bi bi-sliders"></i> {% trans "Opcje" %}
+                        </a>
+                    </li>
                     {% if user.is_staff %}
                     <li class="nav-item">
                         <a class="nav-link" href="/admin/">
@@ -211,12 +221,13 @@
                         </ul>
                     </li>
                     <li class="nav-item language-switcher ms-2">
+                        {% get_current_language as LANGUAGE %}
                         <form action="{% url 'set_language' %}" method="post" class="d-inline">
                             {% csrf_token %}
                             <input name="next" type="hidden" value="{{ request.path }}">
                             <select name="language" onchange="this.form.submit()" class="form-select-sm">
-                                <option value="pl" {% if LANGUAGE_CODE == 'pl' %}selected{% endif %}>🇵🇱 PL</option>
-                                <option value="en" {% if LANGUAGE_CODE == 'en' %}selected{% endif %}>🇬🇧 EN</option>
+                                <option value="pl" {% if LANGUAGE == 'pl' %}selected{% endif %}>🇵🇱 PL</option>
+                                <option value="en" {% if LANGUAGE == 'en' %}selected{% endif %}>🇬🇧 EN</option>
                             </select>
                         </form>
                     </li>

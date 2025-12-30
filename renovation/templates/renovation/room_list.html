@@ -1,0 +1,96 @@
+{% extends 'renovation/base.html' %}
+{% load i18n static %}
+
+{% block title %}{% trans "Pomieszczenia" %}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2><i class="bi bi-door-open"></i> {% trans "Pomieszczenia" %}</h2>
+                    <p class="text-muted">{{ current_property.name }}</p>
+                </div>
+                <a href="{% url 'room_add' %}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> {% trans "Dodaj pomieszczenie" %}
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        {% for room in rooms %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <h5 class="card-title mb-0">
+                            {{ room.get_display_name }}
+                        </h5>
+                        {% if room.progress_percentage %}
+                        <span class="badge bg-info">{{ room.progress_percentage }}%</span>
+                        {% endif %}
+                    </div>
+
+                    {% if room.progress_percentage %}
+                    <div class="progress mb-3" style="height: 8px;">
+                        <div class="progress-bar" role="progressbar"
+                             style="width: {{ room.progress_percentage }}%;"
+                             aria-valuenow="{{ room.progress_percentage }}"
+                             aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    {% endif %}
+
+                    <div class="mb-2">
+                        <small class="text-muted"><i class="bi bi-tag"></i> {{ room.get_name_display }}</small>
+                    </div>
+
+                    {% if room.square_meters %}
+                    <div class="mb-2">
+                        <small><i class="bi bi-rulers"></i> {{ room.square_meters }} m²</small>
+                    </div>
+                    {% endif %}
+
+                    {% if room.floor_type %}
+                    <div class="mb-2">
+                        <small><i class="bi bi-grid-3x3-gap"></i> {% trans "Podłoga" %}: {{ room.get_floor_type_display }}</small>
+                    </div>
+                    {% endif %}
+
+                    {% if room.current_status %}
+                    <div class="mb-3">
+                        <small class="text-muted">{{ room.current_status|truncatewords:15 }}</small>
+                    </div>
+                    {% endif %}
+
+                    <div class="btn-group w-100" role="group">
+                        <a href="{% url 'room_detail' room.id %}" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-eye"></i> {% trans "Szczegóły" %}
+                        </a>
+                        <a href="{% url 'room_edit' room.id %}" class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-pencil"></i> {% trans "Edytuj" %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i>
+                {% trans "Brak pomieszczeń. Dodaj pierwsze pomieszczenie dla tej nieruchomości." %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> {% trans "Powrót do panelu" %}
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,99 @@
+{% extends 'renovation/base.html' %}
+{% load i18n static %}
+
+{% block title %}{% trans "Narzędzia/Sprzęt" %}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2><i class="bi bi-tools"></i> {% trans "Narzędzia/Sprzęt" %}</h2>
+                    <p class="text-muted">{% trans "Zarządzaj swoim sprzętem i narzędziami" %}</p>
+                </div>
+                <a href="{% url 'equipment_add' %}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> {% trans "Dodaj sprzęt" %}
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        {% for equipment in equipment_items %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 {% if equipment.is_sold %}border-secondary{% endif %}">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <h5 class="card-title mb-0">
+                            {{ equipment.name }}
+                        </h5>
+                        <div>
+                            {% if equipment.is_sold %}
+                                <span class="badge bg-secondary">{% trans "Sprzedany" %}</span>
+                            {% elif equipment.is_assigned %}
+                                <span class="badge bg-success">{% trans "Przypisany" %}</span>
+                            {% else %}
+                                <span class="badge bg-info">{% trans "Dostępny" %}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mb-2">
+                        <small class="text-muted">
+                            <i class="bi bi-wrench"></i> {{ equipment.get_condition_display }}
+                        </small>
+                    </div>
+
+                    {% if equipment.purpose %}
+                    <div class="mb-3">
+                        <small>{{ equipment.purpose|truncatewords:20 }}</small>
+                    </div>
+                    {% endif %}
+
+                    {% if equipment.current_assignment %}
+                    <div class="mb-2">
+                        <small class="text-success">
+                            <i class="bi bi-geo-alt"></i> {{ equipment.current_assignment.assigned_property.name }}
+                        </small>
+                    </div>
+                    {% endif %}
+
+                    {% if equipment.photos.count > 0 %}
+                    <div class="mb-3">
+                        <small class="text-muted">
+                            <i class="bi bi-camera"></i> {{ equipment.photos.count }}/5 {% trans "zdjęć" %}
+                        </small>
+                    </div>
+                    {% endif %}
+
+                    <div class="btn-group w-100" role="group">
+                        <a href="{% url 'equipment_detail' equipment.id %}" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-eye"></i> {% trans "Szczegóły" %}
+                        </a>
+                        <a href="{% url 'equipment_edit' equipment.id %}" class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-pencil"></i> {% trans "Edytuj" %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i>
+                {% trans "Brak sprzętu. Dodaj pierwsze narzędzie/sprzęt." %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> {% trans "Powrót do panelu" %}
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

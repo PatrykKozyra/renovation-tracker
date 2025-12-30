@@ -36,6 +36,11 @@
         </div>
         <div class="form-body">
             {% crispy form %}
+            <div class="mt-3">
+                <a href="{% url 'purchases_list' %}" class="btn btn-secondary btn-lg">
+                    <i class="bi bi-arrow-left"></i> {% trans "Anuluj" %}
+                </a>
+            </div>
         </div>
     </div>
 </div>

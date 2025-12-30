@@ -43,12 +43,44 @@
 {% block content %}
 <div class="row mb-4">
     <div class="col-12">
-        <h1 class="mb-3">
-            <i class="bi bi-speedometer2"></i> {% trans "Panel główny" %}
-        </h1>
-        <p class="text-muted">{% trans "Kompleksowy przegląd postępu remontu" %}</p>
+        <div class="d-flex justify-content-between align-items-start">
+            <div>
+                <h1 class="mb-3">
+                    <i class="bi bi-speedometer2"></i> {% trans "Panel główny" %}
+                </h1>
+                <p class="text-muted">{% trans "Kompleksowy przegląd postępu remontu" %}</p>
+            </div>
+            <div class="text-end">
+                <a href="{% url 'property_list' %}" class="btn btn-outline-primary">
+                    <i class="bi bi-building"></i> {% trans "Zarządzaj nieruchomościami" %}
+                </a>
+            </div>
+        </div>
     </div>
 </div>
+
+<!-- Current Property Info -->
+{% if current_property %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="alert alert-info d-flex justify-content-between align-items-center">
+            <div>
+                <i class="bi bi-building-check"></i>
+                <strong>{% trans "Aktualna nieruchomość" %}:</strong>
+                {{ current_property.name }} - <small class="text-muted">{{ current_property.full_address }}</small>
+            </div>
+            <div>
+                <a href="{% url 'room_list' %}" class="btn btn-sm btn-outline-primary me-2">
+                    <i class="bi bi-door-open"></i> {% trans "Pomieszczenia" %}
+                </a>
+                <a href="{% url 'property_list' %}" class="btn btn-sm btn-outline-dark">
+                    <i class="bi bi-arrow-repeat"></i> {% trans "Przełącz nieruchomość" %}
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
 
 <!-- Summary Statistics Cards -->
 <div class="row g-3 mb-4">

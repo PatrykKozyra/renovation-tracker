@@ -1,0 +1,277 @@
+{% extends 'renovation/base.html' %}
+{% load i18n static %}
+
+{% block title %}{{ equipment.name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h2>
+                        <i class="bi bi-tools"></i>
+                        {{ equipment.name }}
+                        {% if equipment.is_sold %}
+                            <span class="badge bg-secondary">{% trans "Sprzedany" %}</span>
+                        {% elif equipment.is_assigned %}
+                            <span class="badge bg-success">{% trans "Przypisany" %}</span>
+                        {% else %}
+                            <span class="badge bg-info">{% trans "Dostępny" %}</span>
+                        {% endif %}
+                    </h2>
+                    <p class="text-muted">{{ equipment.get_condition_display }}</p>
+                </div>
+                <div>
+                    <a href="{% url 'equipment_edit' equipment.id %}" class="btn btn-primary">
+                        <i class="bi bi-pencil"></i> {% trans "Edytuj" %}
+                    </a>
+                    <a href="{% url 'equipment_delete' equipment.id %}" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> {% trans "Usuń" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Basic Information -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="bi bi-info-circle"></i> {% trans "Informacje podstawowe" %}</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-sm">
+                        <tbody>
+                            <tr>
+                                <th>{% trans "Przeznaczenie" %}:</th>
+                                <td>{{ equipment.purpose }}</td>
+                            </tr>
+                            <tr>
+                                <th>{% trans "Stan techniczny" %}:</th>
+                                <td><span class="badge bg-secondary">{{ equipment.get_condition_display }}</span></td>
+                            </tr>
+                            {% if equipment.notes %}
+                            <tr>
+                                <th>{% trans "Notatki" %}:</th>
+                                <td>{{ equipment.notes }}</td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Purchase Information -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="bi bi-receipt"></i> {% trans "Informacje o zakupie" %}</h5>
+                </div>
+                <div class="card-body">
+                    {% if equipment.is_old %}
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i> {% trans "Stary sprzęt - brak danych o zakupie" %}
+                        </div>
+                    {% else %}
+                        <table class="table table-sm">
+                            <tbody>
+                                {% if equipment.purchase_date %}
+                                <tr>
+                                    <th>{% trans "Data zakupu" %}:</th>
+                                    <td>{{ equipment.purchase_date }}</td>
+                                </tr>
+                                {% endif %}
+                                {% if equipment.purchase_price %}
+                                <tr>
+                                    <th>{% trans "Cena zakupu" %}:</th>
+                                    <td><strong>{{ equipment.purchase_price }} PLN</strong></td>
+                                </tr>
+                                {% endif %}
+                                {% if equipment.vendor %}
+                                <tr>
+                                    <th>{% trans "Miejsce zakupu" %}:</th>
+                                    <td>{{ equipment.vendor }}</td>
+                                </tr>
+                                {% endif %}
+                                {% if equipment.receipt_photo %}
+                                <tr>
+                                    <th>{% trans "Paragon" %}:</th>
+                                    <td>
+                                        <a href="{{ equipment.receipt_photo.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-file-image"></i> {% trans "Zobacz paragon" %}
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sold Information -->
+    {% if equipment.is_sold %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-secondary">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0"><i class="bi bi-cash-coin"></i> {% trans "Informacje o sprzedaży" %}</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-sm">
+                        <tbody>
+                            {% if equipment.sold_date %}
+                            <tr>
+                                <th>{% trans "Data sprzedaży" %}:</th>
+                                <td>{{ equipment.sold_date }}</td>
+                            </tr>
+                            {% endif %}
+                            {% if equipment.sold_price %}
+                            <tr>
+                                <th>{% trans "Cena sprzedaży" %}:</th>
+                                <td><strong>{{ equipment.sold_price }} PLN</strong></td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Photos Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-camera"></i> {% trans "Zdjęcia" %} ({{ photos.count }}/5)</h5>
+                    {% if can_add_photo %}
+                    <a href="{% url 'equipment_photo_add' equipment.id %}" class="btn btn-sm btn-success">
+                        <i class="bi bi-plus-circle"></i> {% trans "Dodaj zdjęcie" %}
+                    </a>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    {% if photos %}
+                    <div class="row">
+                        {% for photo in photos %}
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <img src="{{ photo.photo.url }}" class="card-img-top" alt="{{ photo.caption }}">
+                                <div class="card-body">
+                                    {% if photo.caption %}
+                                    <p class="card-text">{{ photo.caption }}</p>
+                                    {% endif %}
+                                    <a href="{% url 'equipment_photo_delete' photo.id %}" class="btn btn-sm btn-danger">
+                                        <i class="bi bi-trash"></i> {% trans "Usuń" %}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted">{% trans "Brak zdjęć. Dodaj pierwsze zdjęcie sprzętu." %}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Current Assignment -->
+    {% if equipment.current_assignment %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-success">
+                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-geo-alt"></i> {% trans "Aktualne przypisanie" %}</h5>
+                    <a href="{% url 'equipment_unassign' equipment.id %}" class="btn btn-sm btn-warning">
+                        <i class="bi bi-x-circle"></i> {% trans "Zwolnij sprzęt" %}
+                    </a>
+                </div>
+                <div class="card-body">
+                    <p><strong>{% trans "Nieruchomość" %}:</strong> {{ equipment.current_assignment.assigned_property.name }}</p>
+                    <p><strong>{% trans "Od" %}:</strong> {{ equipment.current_assignment.start_date }}</p>
+                    {% if equipment.current_assignment.notes %}
+                    <p><strong>{% trans "Notatki" %}:</strong> {{ equipment.current_assignment.notes }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% elif not equipment.is_sold %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body text-center">
+                    <p class="mb-3">{% trans "Sprzęt nie jest przypisany do żadnej nieruchomości" %}</p>
+                    <a href="{% url 'equipment_assign' equipment.id %}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> {% trans "Przypisz do nieruchomości" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Assignment History -->
+    {% if assignments %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="bi bi-clock-history"></i> {% trans "Historia przypisań" %}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>{% trans "Nieruchomość" %}</th>
+                                    <th>{% trans "Od" %}</th>
+                                    <th>{% trans "Do" %}</th>
+                                    <th>{% trans "Notatki" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for assignment in assignments %}
+                                <tr>
+                                    <td>{{ assignment.assigned_property.name }}</td>
+                                    <td>{{ assignment.start_date }}</td>
+                                    <td>
+                                        {% if assignment.end_date %}
+                                            {{ assignment.end_date }}
+                                        {% else %}
+                                            <span class="badge bg-success">{% trans "Aktywne" %}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ assignment.notes|truncatewords:10 }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <a href="{% url 'equipment_list' %}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> {% trans "Powrót do listy" %}
+            </a>
+            <a href="{% url 'equipment_edit' equipment.id %}" class="btn btn-primary">
+                <i class="bi bi-pencil"></i> {% trans "Edytuj" %}
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

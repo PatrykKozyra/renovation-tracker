@@ -1,0 +1,47 @@
+{% extends 'renovation/base.html' %}
+{% load i18n static %}
+
+{% block title %}{% trans "Usuń sprzęt" %}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow">
+                <div class="card-header bg-danger text-white">
+                    <h3 class="mb-0">
+                        <i class="bi bi-exclamation-triangle"></i> {% trans "Usuń sprzęt" %}
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <p class="lead">
+                        {% trans "Czy na pewno chcesz usunąć ten sprzęt?" %}
+                    </p>
+
+                    <div class="alert alert-warning">
+                        <strong>{{ equipment.name }}</strong><br>
+                        <small>{{ equipment.get_condition_display }}</small>
+                    </div>
+
+                    <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        {% trans "Ta operacja jest nieodwracalna. Wszystkie zdjęcia i historia przypisań również zostaną usunięte." %}
+                    </div>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-danger btn-lg">
+                                <i class="bi bi-trash"></i> {% trans "Tak, usuń" %}
+                            </button>
+                            <a href="{% url 'equipment_detail' equipment.id %}" class="btn btn-secondary btn-lg">
+                                <i class="bi bi-x-circle"></i> {% trans "Anuluj" %}
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
